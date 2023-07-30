@@ -3,36 +3,50 @@ import { ParseError } from './ParseError.ts';
 import { AsmLine } from './AsmLine.ts';
 import { isAlias, isData, isInstruction, isLabel } from './util.ts';
 
-function parseMnemonic(line: string) {
+export function parseAsmLine(line: string) {
+  const mnemonic = parseMnemonic(line);
+  const operands = parseOperands(line);
+  return new AsmLine(mnemonic, operands);
+}
+
+export function parseMnemonic(line: string) {
   return line.split(' ')[0];
 }
 
-function parseOperands(line: string) {
+function operandSizeBitsByIndex(index: number) {
+  if (index >= 3) {
+    throw new ParseError('Only 3 operands are supported');
+  }
+
+  return index === 2 ? 8 : 2;
+}
+
+export function parseOperands(line: string) {
   const tokens = line.split(' ').slice(1);
-  return tokens.map((token, index) => new Operand(token, index));
+  return tokens.map((token, index) => new Operand(token, operandSizeBitsByIndex(index)));
 }
 
 export function parseAsmLines(asmCode: string[]) {
+  const result: AsmLine[] = [];
   let label: string | null = null;
 
   for (const line of asmCode) {
-    if (isInstruction(line)) {
-      const mnemonic = parseMnemonic(line);
-      const operands = parseOperands(line);
-      const asmLine = new AsmLine(mnemonic, operands);
+    if (isInstruction(line) || isData(line)) {
+      const asmLine = parseAsmLine(line);
       if (label !== null) {
         asmLine.setLabel(label);
         label = null;
       }
-    } else if (isData(line)) {
-      label = null;
+      result.push(asmLine);
     } else if (isLabel(line)) {
       label = line;
     } else if (isAlias(line)) {
+      // TODO
       label = null;
     } else {
       throw new ParseError(`Unrecognized line "${line}"`);
     }
   }
-  return [];
+
+  return result;
 }

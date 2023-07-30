@@ -21,12 +21,16 @@ function removeEmpty(asmCode: string[]) {
 }
 
 function asmLinesToMachineCode(asmLines: AsmLine[]) {
-  return asmLines.map((l) => l.toInt());
+  return asmLines.map((l) => l.getBytes()).flat();
 }
 
 export function assemble(asmCode: string[]) {
   const linesWithoutComments = removeComments(asmCode);
   const nonEmptyLines = removeEmpty(linesWithoutComments);
   const asmLines = parseAsmLines(nonEmptyLines);
+
+  // TODO: Remove
+  asmLines.forEach((asmLine) => console.log(asmLine.toString()));
+
   return asmLinesToMachineCode(asmLines);
 }
