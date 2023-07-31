@@ -25,8 +25,16 @@ function asmLinesToMachineCode(asmLines: AsmLine[]) {
   return asmLines.filter((line) => !line.getIsData()).map((line) => line.getBytes()).flat();
 }
 
+function gelLabelIndex(asmLines: AsmLine[], label: string) {
+  return asmLines.findIndex((line) => line.getLabel() === label);
+}
+
 function getLabelOffset(asmLines: AsmLine[], label: string) {
-  return asmLines.find((line) => line.getLabel() === label)?.getOffsetInBytes();
+  return asmLines[gelLabelIndex(asmLines, label)]?.getOffsetInBytes();
+}
+
+function getLabelValue(asmLines: AsmLine[], label: string) {
+  return asmLines[gelLabelIndex(asmLines, label)]?.getDataValue();
 }
 
 function cloneAsmLines(asmLines: AsmLine[]) {
@@ -42,13 +50,24 @@ export function fillImmediates(asmLines: AsmLine[]) {
     for (const operand of operands) {
       const label = operand.getLabel();
       if (label !== undefined) {
-        const labelOffset = getLabelOffset(asmLines, label);
+        // Load immediate is the only instruction that loads value at label not label address
+        if (asmLine.getMnemonic() === 'IMM') {
+          const labelValue = getLabelValue(asmLines, label);
 
-        if (labelOffset === undefined) {
-          throw new AssembleError(`Cannot find label "${label}" offset for line "${asmLine.toString()}". No such label or offsets were not filled.`);
+          if (labelValue === undefined) {
+            throw new AssembleError(`Cannot find label "${label}" value for line "${asmLine.toString()}". No such label or offsets were not filled.`);
+          }
+
+          operand.setImmediate(labelValue);
+        } else {
+          const labelOffset = getLabelOffset(asmLines, label);
+
+          if (labelOffset === undefined) {
+            throw new AssembleError(`Cannot find label "${label}" offset for line "${asmLine.toString()}". No such label or offsets were not filled.`);
+          }
+
+          operand.setImmediate(labelOffset);
         }
-
-        operand.setImmediate(labelOffset);
       }
     }
   }

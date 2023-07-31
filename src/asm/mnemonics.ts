@@ -21,6 +21,6 @@ export const EXTRA_BYTE_INSTRUCTIONS = [
   'BIT',
   'IMM',
   'BRA',
-]
+];
 export const ALIASES = {
 };

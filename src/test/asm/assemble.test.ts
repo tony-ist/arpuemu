@@ -63,7 +63,7 @@ describe('assemble', () => {
       const filledOffsetsAsmLines = fillOffsets(asmLines);
       const actual = fillImmediates(filledOffsetsAsmLines);
       expect(actual.length).toEqual(2);
-      expect(actual[1].getOperands()[2]).toEqual(Operand.fromImmediate('.a', 0, '.a'))
+      expect(actual[1].getOperands()[2]).toEqual(Operand.fromImmediate('.a', 3, '.a'))
     });
     it('should fill immediates for last address', () => {
       const asmLines = parseAsmLines([
@@ -74,7 +74,7 @@ describe('assemble', () => {
       const filledOffsetsAsmLines = fillOffsets(asmLines);
       const actual = fillImmediates(filledOffsetsAsmLines);
       expect(actual.length).toEqual(2);
-      expect(actual[0].getOperands()[2]).toEqual(Operand.fromImmediate('.a', 2, '.a'))
+      expect(actual[0].getOperands()[2]).toEqual(Operand.fromImmediate('.a', 3, '.a'))
     });
   });
 });

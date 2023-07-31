@@ -59,6 +59,10 @@ export class AsmLine {
     return this.label;
   }
 
+  getMnemonic() {
+    return this.mnemonic;
+  }
+
   clone() {
     const operandsClone = this.operands.map((operand) => operand.clone());
     const clone = new AsmLine(this.mnemonic, operandsClone);
@@ -75,5 +79,13 @@ export class AsmLine {
     const prefix = this.label === undefined ? '' : `${this.label} `;
     const operandStrings = this.operands.map((operand) => operand.toString()).join(' ');
     return `${prefix}${this.mnemonic} ${operandStrings}`;
+  }
+
+  getDataValue() {
+    if (this.isData) {
+      return this.operands[0].toInt();
+    } else {
+      throw new Error(`Trying to access data value of non-data AsmLine "${this.toString()}"`);
+    }
   }
 }
