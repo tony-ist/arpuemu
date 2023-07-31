@@ -25,6 +25,18 @@ describe('assemble', () => {
     assertProgram('multiplication');
   });
 
+  it('should assemble bitwise', () => {
+    assertProgram('bitwise');
+  });
+
+  it('should assemble io', () => {
+    assertProgram('io');
+  });
+
+  it('should assemble procedure', () => {
+    assertProgram('procedure');
+  });
+
   describe('parseAsmLines', () => {
     it('should parse labels', () => {
       const actual = parseAsmLines([
