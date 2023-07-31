@@ -37,6 +37,10 @@ describe('assemble', () => {
     assertProgram('procedure');
   });
 
+  it('should assemble other', () => {
+    assertProgram('other');
+  });
+
   describe('parseAsmLines', () => {
     it('should parse labels', () => {
       const actual = parseAsmLines([
