@@ -1,4 +1,4 @@
-import { ALIASES, DATA_MNEMONIC, INSTRUCTION_MNEMONICS } from './instructions.ts';
+import { ALIASES, DATA_MNEMONIC, INSTRUCTION_MNEMONICS } from './mnemonics.ts';
 
 export function isInstruction(line: string) {
   return INSTRUCTION_MNEMONICS.some((mnemonic) => line.startsWith(mnemonic));

@@ -7,14 +7,14 @@ DW 3
 DW 2
 
 // Instructions
-IMM R2 .a
-IMM R3 .b
+IMM R2 0 .a
+IMM R3 0 .b
 
 .start
 ADD R1 R2
 DEC R3
 BRA 0b00 0b11 .start // Branch to start if not zero flag
-IMM R4 0
+IMM R4 0 0
 STR R1 R4
 
 .end

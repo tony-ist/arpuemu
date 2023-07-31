@@ -17,5 +17,10 @@ export const INSTRUCTION_MNEMONICS = [
   'BRA',
   'MOV',
 ];
+export const EXTRA_BYTE_INSTRUCTIONS = [
+  'BIT',
+  'IMM',
+  'BRA',
+]
 export const ALIASES = {
 };

@@ -1,6 +1,6 @@
 import { Operand } from './Operand';
 import { isData } from './util.ts';
-import { INSTRUCTION_MNEMONICS } from './instructions.ts';
+import { INSTRUCTION_MNEMONICS } from './mnemonics.ts';
 
 export class AsmLine {
   private readonly isData: boolean
@@ -8,14 +8,15 @@ export class AsmLine {
   private readonly operands: Operand[];
   private readonly sizeInBytes: number;
   private readonly opcode: number;
+  private offsetInBytes?: number;
   private label?: string;
 
   constructor(mnemonic: string, operands: Operand[]) {
+    this.isData = isData(mnemonic);
     this.mnemonic = mnemonic;
     this.operands = operands;
-    this.opcode = INSTRUCTION_MNEMONICS.findIndex((mnemonic) => this.mnemonic === mnemonic);
-    this.isData = isData(mnemonic);
     this.sizeInBytes = operands.length === 3 ? 2 : 1;
+    this.opcode = INSTRUCTION_MNEMONICS.findIndex((mnemonic) => this.mnemonic === mnemonic);
   }
 
   getBytes() {
@@ -36,6 +37,38 @@ export class AsmLine {
 
   setLabel(label: string) {
     this.label = label;
+  }
+
+  setOffsetInBytes(offsetInBytes: number) {
+    this.offsetInBytes = offsetInBytes;
+  }
+
+  getOffsetInBytes() {
+    return this.offsetInBytes;
+  }
+
+  getOperands() {
+    return this.operands;
+  }
+
+  getIsData() {
+    return this.isData;
+  }
+
+  getLabel() {
+    return this.label;
+  }
+
+  clone() {
+    const operandsClone = this.operands.map((operand) => operand.clone());
+    const clone = new AsmLine(this.mnemonic, operandsClone);
+    if (this.label !== undefined) {
+      clone.setLabel(this.label);
+    }
+    if (this.offsetInBytes !== undefined) {
+      clone.setOffsetInBytes(this.offsetInBytes);
+    }
+    return clone;
   }
 
   toString() {

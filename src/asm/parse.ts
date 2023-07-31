@@ -1,7 +1,16 @@
 import { Operand } from './Operand.ts';
 import { ParseError } from './ParseError.ts';
 import { AsmLine } from './AsmLine.ts';
-import { isAlias, isData, isInstruction, isLabel } from './util.ts';
+import {
+  isAlias,
+  isBinaryNumber,
+  isData,
+  isDecimalNumber,
+  isHexNumber,
+  isInstruction,
+  isLabel,
+  isRegister
+} from './util.ts';
 
 export function parseAsmLine(line: string) {
   const mnemonic = parseMnemonic(line);
@@ -13,7 +22,7 @@ export function parseMnemonic(line: string) {
   return line.split(' ')[0];
 }
 
-function operandSizeBitsByIndex(index: number) {
+function operandSizeInBitsByIndex(index: number) {
   if (index >= 3) {
     throw new ParseError('Only 3 operands are supported');
   }
@@ -23,7 +32,34 @@ function operandSizeBitsByIndex(index: number) {
 
 export function parseOperands(line: string) {
   const tokens = line.split(' ').slice(1);
-  return tokens.map((token, index) => new Operand(token, operandSizeBitsByIndex(index)));
+  return tokens.map((token, index) => parseOperand(token, operandSizeInBitsByIndex(index)));
+}
+
+export function parseOperand(token: string, sizeInBits?: number) {
+  if (isLabel(token)) {
+    return Operand.fromLabel(token);
+  }
+
+  let immediate;
+
+  if (isRegister(token)) {
+    // Register R1 is first one
+    immediate = parseInt(token[1]) - 1;
+  } else if (isDecimalNumber(token)) {
+    immediate = parseInt(token);
+  } else if (isHexNumber(token)) {
+    immediate = parseInt(token.slice(2), 16);
+  } else if (isBinaryNumber(token)) {
+    immediate = parseInt(token.slice(2), 2);
+  } else {
+    throw new ParseError(`Unrecognized operand "${token}"`);
+  }
+
+  if (sizeInBits !== undefined && immediate >= Math.pow(2, sizeInBits)) {
+    throw new ParseError(`Immediate value for operand "${token}" should fit in ${sizeInBits} bits"`);
+  }
+
+  return Operand.fromImmediate(token, immediate);
 }
 
 export function parseAsmLines(asmCode: string[]) {

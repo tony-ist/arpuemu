@@ -1,37 +1,28 @@
-import { ParseError } from './ParseError.ts';
-import { isBinaryNumber, isDecimalNumber, isHexNumber, isLabel, isRegister } from './util.ts';
-
 export class Operand {
-  private readonly sizeBits: number;
   private label?: string;
   private immediate?: number;
-  private token?: string;
+  private token: string;
 
-  constructor(token: string, sizeBits: number) {
-    if (isLabel(token)) {
-      this.label = token;
-      return;
-    }
-
-    this.sizeBits = sizeBits;
+  constructor(token: string, immediate?: number, label?: string) {
     this.token = token;
+    this.immediate = immediate;
+    this.label = label;
+  }
 
-    if (isRegister(token)) {
-      // Register R1 is first one
-      this.immediate = parseInt(token[1]) - 1;
-    } else if (isDecimalNumber(token)) {
-      this.immediate = parseInt(token);
-    } else if (isHexNumber(token)) {
-      this.immediate = parseInt(token.slice(2), 16);
-    } else if (isBinaryNumber(token)) {
-      this.immediate = parseInt(token.slice(2), 2);
-    } else {
-      throw new ParseError(`Unrecognized operand "${token}"`);
-    }
+  public static fromLabel(label: string) {
+    return new Operand(label, undefined, label);
+  }
 
-    if (this.immediate >= Math.pow(2, this.sizeBits)) {
-      throw new ParseError(`Immediate value for operand "${this.toString()}" should fit in ${this.sizeBits} bits"`);
-    }
+  public static fromImmediate(token: string, immediate: number, label?: string) {
+    return new Operand(token, immediate, label);
+  }
+
+  getLabel() {
+    return this.label;
+  }
+
+  setImmediate(immediate: number) {
+    this.immediate = immediate;
   }
 
   toInt() {
@@ -40,5 +31,9 @@ export class Operand {
 
   toString() {
     return this.token || this.label;
+  }
+
+  clone() {
+    return new Operand(this.token, this.immediate, this.label);
   }
 }
