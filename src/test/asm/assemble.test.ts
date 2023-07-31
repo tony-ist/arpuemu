@@ -13,7 +13,7 @@ function readFileLines(filepath: string) {
 
 function assertProgram(name: string) {
   const prefix = 'src/test/asm/programs';
-  const expectedCode = readFileLines(path.join(prefix, `${name}.hex`)).join(' ');
+  const expectedCode = readFileLines(path.join(prefix, `${name}.hex`)).join(' ').trim();
   const asmCode = readFileLines(path.join(prefix, `${name}.s`))
   const machineCode = assemble(asmCode);
   const actualCode = toHex(machineCode).join(' ');

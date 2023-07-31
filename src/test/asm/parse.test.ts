@@ -22,20 +22,16 @@ describe('parse', () => {
       expect(parseOperand('.label')).toEqual(Operand.fromLabel('.label'))
     });
 
-    it('should parse registers', () => {
-      expect(parseOperand('R2')).toEqual(Operand.fromImmediate('R2', 1))
-    });
-
-    it('should parse decimals', () => {
-      expect(parseOperand('127')).toEqual(Operand.fromImmediate('127', 127))
-    });
-
-    it('should parse hex', () => {
-      expect(parseOperand('0xFF')).toEqual(Operand.fromImmediate('0xFF', 0xFF))
-    });
-
-    it('should parse binary', () => {
-      expect(parseOperand('0b1010')).toEqual(Operand.fromImmediate('0b1010', 0b1010))
+    it.each([
+      ['R2', 1],
+      ['127', 127],
+      ['0xFF', 0xFF],
+      ['0b1010', 0b1010],
+      ['12_34', 1234],
+      ['0x1_F', 0x1F],
+      ['0b1010_0011', 0b10100011],
+    ])('should parse %s to be %s', (token, immediate) => {
+      expect(parseOperand(token)).toEqual(Operand.fromImmediate(token, immediate))
     });
 
     it('should throw ParseError when immediate exceeds size in bits', () => {

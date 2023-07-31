@@ -97,8 +97,5 @@ export function assemble(asmCode: string[]) {
   const filledOffsetsAsmLines = fillOffsets(asmLines);
   const filledImmediatesAsmLines = fillImmediates(filledOffsetsAsmLines);
 
-  // TODO: Remove
-  filledImmediatesAsmLines.forEach((asmLine) => console.log(asmLine.toString()));
-
   return asmLinesToMachineCode(filledImmediatesAsmLines);
 }

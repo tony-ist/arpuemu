@@ -41,16 +41,18 @@ export function parseOperand(token: string, sizeInBits?: number) {
   }
 
   let immediate;
+  
+  const tokenNoUnderscores = token.replace(/_/g, '');
 
   if (isRegister(token)) {
     // Register R1 is first one
     immediate = parseInt(token[1]) - 1;
-  } else if (isDecimalNumber(token)) {
-    immediate = parseInt(token);
-  } else if (isHexNumber(token)) {
-    immediate = parseInt(token.slice(2), 16);
-  } else if (isBinaryNumber(token)) {
-    immediate = parseInt(token.slice(2), 2);
+  } else if (isDecimalNumber(tokenNoUnderscores)) {
+    immediate = parseInt(tokenNoUnderscores);
+  } else if (isHexNumber(tokenNoUnderscores)) {
+    immediate = parseInt(tokenNoUnderscores.slice(2), 16);
+  } else if (isBinaryNumber(tokenNoUnderscores)) {
+    immediate = parseInt(tokenNoUnderscores.slice(2), 2);
   } else {
     throw new ParseError(`Unrecognized operand "${token}"`);
   }
