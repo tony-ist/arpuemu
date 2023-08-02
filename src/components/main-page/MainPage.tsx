@@ -1,5 +1,4 @@
-import { useContext, useRef, useState } from 'react';
-import { ARPUEmulator } from '../../emulator/ARPUEmulator.ts';
+import { useContext, useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -9,28 +8,14 @@ import styles from '../App.module.css';
 import { EmulatorContext } from '../App.tsx';
 
 export function MainPage() {
-  const emulator = useContext(EmulatorContext);
+  const { initEmulator, emulatorState, step: emulatorStep } = useContext(EmulatorContext);
   const [asmCode, setAsmCode] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [stepNumber, setStepNumber] = useState<number | null>(null);
-  /*
-        {
-          emulator &&
-          <PMemViewer
-            machineCode={emulator.getProgramMemory()}
-          />
-        }
-        {
-          emulator &&
-          <RegViewer
-            registers={emulator.getRegisters()}
-          />
-        }
-   */
+
   function compile() {
     setError(null);
     try {
-      setStepNumber(0);
+      initEmulator(asmCode);
     } catch (error) {
       console.error(error);
       setError((error as Error).message);
@@ -38,10 +23,16 @@ export function MainPage() {
   }
 
   function step() {
-    if (stepNumber === null) {
-      throw new Error('Trying to make a step while stepNumber is uninitialised');
+    if (emulatorState === null) {
+      throw new Error('Should initialize emulator before using it');
     }
-    setStepNumber((stepNumber) => stepNumber === null ? 0 : stepNumber + 1);
+
+    try {
+      emulatorStep();
+    } catch (error) {
+      console.error(error);
+      setError((error as Error).message);
+    }
   }
 
   return (
@@ -53,23 +44,35 @@ export function MainPage() {
           fullWidth
         />
         <Button
-          variant='contained'
+          variant="contained"
           onClick={compile}
         >
           Compile
         </Button>
         <Button
-          variant='text'
+          variant="text"
           onClick={step}
-          disabled={true}
+          disabled={emulatorState === null}
         >
           Step
         </Button>
         {
+          emulatorState &&
+            <PMemViewer
+                machineCode={emulatorState.PMEM}
+            />
+        }
+        {
+          emulatorState &&
+            <RegViewer
+                registers={emulatorState.registers}
+            />
+        }
+        {
           error &&
-            <Box className={styles.errorContainer}>{ error }</Box>
+            <Box className={styles.errorContainer}>{error}</Box>
         }
       </Box>
     </>
-  )
+  );
 }
