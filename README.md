@@ -30,3 +30,14 @@ If you are developing a production application, we recommend updating the config
 - Rewrite this readme
 - Aliases
 - Linting
+- Error validation, display line number
+
+### UI Components
+- Program memory hex view
+- RAM hex view
+- Stack hex view
+- Registers (R1-R4, PC)
+- Flags
+- Ports
+- Display
+- Console

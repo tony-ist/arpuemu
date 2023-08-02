@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { describe, expect, it } from 'vitest';
-import { assemble, fillImmediates, fillOffsets } from '../../asm/assemble.ts';
+import { assembleLines, fillImmediates, fillOffsets } from '../../asm/assemble.ts';
 import { toHex } from '../../asm/util.ts';
 import { parseAsmLines } from '../../asm/parse.ts';
 import { Operand } from '../../asm/Operand.ts';
@@ -15,7 +15,7 @@ function assertProgram(name: string) {
   const prefix = 'src/test/asm/programs';
   const expectedCode = readFileLines(path.join(prefix, `${name}.hex`)).join(' ').trim();
   const asmCode = readFileLines(path.join(prefix, `${name}.s`))
-  const machineCode = assemble(asmCode);
+  const machineCode = assembleLines(asmCode);
   const actualCode = toHex(machineCode).join(' ');
   expect(actualCode).toEqual(expectedCode);
 }

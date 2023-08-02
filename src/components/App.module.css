@@ -1,4 +1,6 @@
-.container {
-    border: 1px solid red;
-    white-space: pre-line;
+
+
+.errorContainer {
+  border: 1px solid red;
+  white-space: pre-line;
 }

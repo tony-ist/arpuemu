@@ -17,6 +17,7 @@ export const INSTRUCTION_MNEMONICS = [
   'BRA',
   'MOV',
 ];
+export const ALL_MNEMONICS = [DATA_MNEMONIC, ...INSTRUCTION_MNEMONICS];
 export const EXTRA_BYTE_INSTRUCTIONS = [
   'BIT',
   'IMM',

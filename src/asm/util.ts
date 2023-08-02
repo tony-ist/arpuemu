@@ -1,7 +1,7 @@
 import { ALIASES, DATA_MNEMONIC, INSTRUCTION_MNEMONICS } from './mnemonics.ts';
 
 export function isInstruction(line: string) {
-  return INSTRUCTION_MNEMONICS.some((mnemonic) => line.startsWith(mnemonic));
+  return INSTRUCTION_MNEMONICS.some((mnemonic) => line.toUpperCase().startsWith(mnemonic));
 }
 
 export function isData(line: string) {

@@ -18,7 +18,6 @@ export class AsmLine {
     this.sizeInBytes = operands.length === 3 ? 2 : 1;
     this.opcode = INSTRUCTION_MNEMONICS.findIndex((mnemonic) => this.mnemonic === mnemonic);
   }
-
   getBytes() {
     const operandInts = this.operands.map((operand) => operand.toInt());
     if (operandInts.some((integer) => integer === undefined)) {

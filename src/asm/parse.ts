@@ -19,7 +19,7 @@ export function parseAsmLine(line: string) {
 }
 
 export function parseMnemonic(line: string) {
-  return line.split(' ')[0];
+  return line.split(' ')[0].toUpperCase();
 }
 
 function operandSizeInBitsByIndex(index: number) {
@@ -58,7 +58,7 @@ export function parseOperand(token: string, sizeInBits?: number) {
   }
 
   if (sizeInBits !== undefined && immediate >= Math.pow(2, sizeInBits)) {
-    throw new ParseError(`Immediate value for operand "${token}" should fit in ${sizeInBits} bits"`);
+    throw new ParseError(`Immediate value for operand "${token}" should fit in ${sizeInBits} bits`);
   }
 
   return Operand.fromImmediate(token, immediate);

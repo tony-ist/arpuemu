@@ -26,6 +26,9 @@ export class Operand {
   }
 
   toInt() {
+    if (this.immediate === undefined) {
+      throw new Error(`Trying to access operand "${this}" immediate which is undefined`);
+    }
     return this.immediate;
   }
 

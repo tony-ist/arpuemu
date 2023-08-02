@@ -21,7 +21,7 @@ function removeEmpty(asmCode: string[]) {
   return asmCode.filter((line) => !(line.trim() === ''));
 }
 
-function asmLinesToMachineCode(asmLines: AsmLine[]) {
+export function IRToMachineCode(asmLines: AsmLine[]) {
   return asmLines.filter((line) => !line.getIsData()).map((line) => line.getBytes()).flat();
 }
 
@@ -94,12 +94,15 @@ export function fillOffsets(asmLines: AsmLine[]) {
   return result;
 }
 
-export function assemble(asmCode: string[]) {
+export function assembleLines(asmCode: string[]) {
+  const IR = compileIntermediateRepresentation(asmCode);
+  return IRToMachineCode(IR);
+}
+
+export function compileIntermediateRepresentation(asmCode: string[]) {
   const linesWithoutComments = removeComments(asmCode);
   const nonEmptyLines = removeEmpty(linesWithoutComments);
   const asmLines = parseAsmLines(nonEmptyLines);
   const filledOffsetsAsmLines = fillOffsets(asmLines);
-  const filledImmediatesAsmLines = fillImmediates(filledOffsetsAsmLines);
-
-  return asmLinesToMachineCode(filledImmediatesAsmLines);
+  return fillImmediates(filledOffsetsAsmLines);
 }
