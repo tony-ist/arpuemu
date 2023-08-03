@@ -99,8 +99,18 @@ export function assembleLines(asmCode: string[]) {
   return IRToMachineCode(IR);
 }
 
+function trim(asmCode: string[]) {
+  return asmCode.map((line) => line.trim());
+}
+
+export function removeExtraSpaces(asmCode: string[]) {
+  return asmCode.map((line) => line.replace(/[ ]+/g, ' '));
+}
+
 export function compileIntermediateRepresentation(asmCode: string[]) {
-  const linesWithoutComments = removeComments(asmCode);
+  const trimmedLines = trim(asmCode);
+  const noExtraSpacesLines = removeExtraSpaces(trimmedLines);
+  const linesWithoutComments = removeComments(noExtraSpacesLines);
   const nonEmptyLines = removeEmpty(linesWithoutComments);
   const asmLines = parseAsmLines(nonEmptyLines);
   const filledOffsetsAsmLines = fillOffsets(asmLines);

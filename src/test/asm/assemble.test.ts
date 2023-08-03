@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { describe, expect, it } from 'vitest';
-import { assembleLines, fillImmediates, fillOffsets } from '../../asm/assemble.ts';
+import { assembleLines, fillImmediates, fillOffsets, removeExtraSpaces } from '../../asm/assemble.ts';
 import { toHex } from '../../asm/asm-util.ts';
 import { parseAsmLines } from '../../asm/parse.ts';
 import { Operand } from '../../asm/Operand.ts';
@@ -91,6 +91,12 @@ describe('assemble', () => {
       const actual = fillImmediates(filledOffsetsAsmLines);
       expect(actual.length).toEqual(2);
       expect(actual[0].getOperands()[2]).toEqual(Operand.fromImmediate('.a', 3, '.a'));
+    });
+  });
+
+  describe('removeExtraSpaces', () => {
+    it('should remove extra spaces', () => {
+      expect(removeExtraSpaces(['   q w', 'q   w', 'q w   ', ' q w '])).toEqual([' q w', 'q w', 'q w ', ' q w ']);
     });
   });
 });

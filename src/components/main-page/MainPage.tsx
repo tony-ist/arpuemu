@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -11,9 +11,23 @@ import { HexViewer } from '../hex/HexViewer.tsx';
 import { toHex } from '../../asm/asm-util.ts';
 
 export function MainPage() {
-  const { initEmulator, emulatorState, step: emulatorStep } = useContext(EmulatorContext);
+  const { initEmulator, emulatorState, step: emulatorStep, portInput } = useContext(EmulatorContext);
   const [asmCode, setAsmCode] = useState('');
+  const [portInputValue, setPortInputValue] = useState('');
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const asmCode = localStorage.getItem('asmCode');
+    if (asmCode !== null) {
+      setAsmCode(asmCode);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (asmCode !== '') {
+      localStorage.setItem('asmCode', asmCode);
+    }
+  }, [asmCode]);
 
   function compile() {
     setError(null);
@@ -30,7 +44,18 @@ export function MainPage() {
       throw new Error('Should initialize emulator before using it');
     }
 
+    setError(null);
+
     try {
+      if (emulatorState.isWaitingPortInput) {
+        if (portInputValue === '') {
+          throw new Error('You should write port input value first');
+        }
+
+        portInput(portInputValue);
+        return;
+      }
+
       emulatorStep();
     } catch (error) {
       console.error(error);
@@ -42,6 +67,7 @@ export function MainPage() {
     <>
       <Box>
         <TextField
+          value={asmCode}
           onChange={(textArea) => setAsmCode(textArea.target.value)}
           multiline
           fullWidth
@@ -87,6 +113,14 @@ export function MainPage() {
               machineCode={emulatorState.outputPorts}
             />
           </Box>
+        }
+        {
+          emulatorState?.isWaitingPortInput &&
+          <TextField
+            label="Port Input"
+            value={portInputValue}
+            onChange={(textArea) => setPortInputValue(textArea.target.value)}
+          />
         }
         {
           error &&
