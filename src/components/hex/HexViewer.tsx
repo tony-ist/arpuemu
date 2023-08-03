@@ -34,7 +34,7 @@ export function HexViewer(props: HexViewerPropTypes) {
           <Box
             key={index}
             className={highlightClassName(index)}
-            sx={{ display: 'inline' }}
+            sx={{ display: 'inline-block' }}
             marginRight={1}
           >
             {hex}

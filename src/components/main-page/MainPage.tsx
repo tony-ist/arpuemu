@@ -45,6 +45,7 @@ export function MainPage() {
           onChange={(textArea) => setAsmCode(textArea.target.value)}
           multiline
           fullWidth
+          inputProps={{ style: { fontFamily: 'RobotoMono, sans-serif' } }}
         />
         <Button
           variant="contained"
