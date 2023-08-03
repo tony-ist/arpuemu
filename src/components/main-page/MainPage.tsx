@@ -65,6 +65,8 @@ export function MainPage() {
             <Box>PC {toHex([emulatorState.PC])}</Box>
             <PMemViewer
               machineCode={emulatorState.PMEM}
+              highlightByte={emulatorState.PC}
+              highlightSize={emulatorState.asmLines[emulatorState.lineIndex]?.getSizeInBytes()}
             />
             <RegViewer
               registers={emulatorState.registers}

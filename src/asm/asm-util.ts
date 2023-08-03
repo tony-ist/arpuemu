@@ -37,5 +37,5 @@ export function isBinaryNumber(token: string) {
 }
 
 export function isRegister(token:string) {
-  return token.startsWith('R');
+  return token.toUpperCase().startsWith('R');
 }
