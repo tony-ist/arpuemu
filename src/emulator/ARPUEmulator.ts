@@ -27,10 +27,8 @@ export interface ARPUEmulatorState {
   // Random access memory
   RAM: number[];
   stack: number[];
-  ports: {
-    input: number[];
-    output: number[];
-  };
+  inputPorts: number[];
+  outputPorts: number[];
   isWaitingPortInput: boolean;
 }
 
@@ -48,10 +46,8 @@ export function defaultARPUEmulatorState(asmCode: string) {
     PMEM: IRToMachineCode(asmLines),
     RAM: new Array(RAM_SIZE_IN_BYTES).fill(0),
     stack: new Array(STACK_SIZE_IN_BYTES),
-    ports: {
-      input: [0, 0, 0, 0],
-      output: [0, 0, 0, 0],
-    },
+    inputPorts: [0, 0, 0, 0],
+    outputPorts: [0, 0, 0, 0],
     isWaitingPortInput: false,
   };
 }
@@ -62,6 +58,7 @@ export class ARPUEmulator {
     INC: this.increment.bind(this),
     IMM: this.loadImmediate.bind(this),
     PLD: this.portLoad.bind(this),
+    PST: this.portStore.bind(this),
   };
 
   constructor(asmCode: string) {
@@ -106,16 +103,25 @@ export class ARPUEmulator {
       throw new Error('Illegal state: current instruction is not PLD but we are waiting for port input');
     }
 
+    const destinationRegisterIndex = asmLine.getOperands()[0].toInt();
     const portIndex = asmLine.getOperands()[1].toInt();
-    this.state.ports.input[portIndex] = value;
+    this.state.registers[destinationRegisterIndex] = value;
+    this.state.inputPorts[portIndex] = value;
+    this.state.PC += 1;
+    this.state.lineIndex += 1;
+    this.state.isWaitingPortInput = false;
   }
 
-  private portLoad(operands: Operand[]) {
-    // const registerIndex = operands[0].toInt();
-    // const portIndex = operands[1].toInt();
+  private portLoad() {
     this.state.isWaitingPortInput = true;
-    // this.state.PC += 1;
-    // this.state.lineIndex += 1;
+  }
+
+  private portStore(operands: Operand[]) {
+    const sourceRegisterIndex = operands[0].toInt();
+    const portIndex = operands[1].toInt();
+    this.state.outputPorts[portIndex] = this.state.registers[sourceRegisterIndex];
+    this.state.PC += 1;
+    this.state.lineIndex += 1;
   }
 
   public getProgramMemory() {
