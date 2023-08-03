@@ -29,6 +29,7 @@ export interface ARPUEmulatorState {
   inputPorts: number[];
   outputPorts: number[];
   isWaitingPortInput: boolean;
+  cycle: number;
 }
 
 export function defaultARPUEmulatorState(asmCode: string) {
@@ -48,6 +49,7 @@ export function defaultARPUEmulatorState(asmCode: string) {
     inputPorts: [0, 0, 0, 0],
     outputPorts: [0, 0, 0, 0],
     isWaitingPortInput: false,
+    cycle: 0,
   };
 }
 
@@ -73,6 +75,7 @@ export class ARPUEmulator {
     const instruction = this.state.asmLines[this.state.lineIndex];
     const mnemonic = instruction.getMnemonic();
     this.handlers[mnemonic](instruction.getOperands());
+    this.state.cycle += 1;
   }
 
   private increment(operands: Operand[]) {
@@ -110,6 +113,7 @@ export class ARPUEmulator {
     this.state.PC += 1;
     this.state.lineIndex += 1;
     this.state.isWaitingPortInput = false;
+    this.state.cycle += 1;
   }
 
   private portLoad() {

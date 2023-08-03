@@ -89,7 +89,8 @@ export function MainPage() {
         {
           emulatorState &&
           <Box>
-            <Box>PC {toHex([emulatorState.PC])}</Box>
+            <Box>Cycle (decimal) {emulatorState.cycle}</Box>
+            <Box>PC (hex) {toHex([emulatorState.PC])}</Box>
             <PMemViewer
               machineCode={emulatorState.PMEM}
               highlightByte={emulatorState.PC}
