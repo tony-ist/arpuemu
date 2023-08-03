@@ -5,6 +5,6 @@ describe('util', () => {
   describe('toHex', () => {
     it('should pad zeroes', () => {
       expect(toHex([0, 0xF])).toEqual(['00', '0F']);
-    })
+    });
   });
 });

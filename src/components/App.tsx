@@ -15,7 +15,7 @@ export interface EmulatorContextType {
 
 const emulatorFunctionStub = () => {
   throw new Error('This context should be initialized inside a component with a state');
-}
+};
 
 export const EmulatorContext = createContext<EmulatorContextType>({
   emulatorState: null,
@@ -31,27 +31,27 @@ export function App() {
     setEmulatorAndState( {
       emulator,
       emulatorState: emulator.getState(),
-    })
+    });
   }
 
   function step() {
-    const error  = new Error('Invalid state: step function is called on uninitialized emulator')
+    const error  = new Error('Invalid state: step function is called on uninitialized emulator');
 
     if (emulatorAndState === null) {
-      throw error
+      throw error;
     }
 
     emulatorAndState.emulator.step();
 
     setEmulatorAndState((prevState) => {
       if (prevState === null) {
-        throw error
+        throw error;
       }
 
       return {
         emulator: prevState.emulator,
         emulatorState: prevState.emulator.getState(),
-      }
+      };
     });
   }
 

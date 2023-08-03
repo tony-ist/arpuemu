@@ -12,6 +12,6 @@ export function RegViewer(props: RegViewerPropTypes) {
       title={'Registers'}
       machineCode={registers}
     />
-  )
+  );
 }
 

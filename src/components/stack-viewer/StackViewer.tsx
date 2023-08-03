@@ -12,6 +12,6 @@ export function StackViewer(props: StackViewerPropTypes) {
       title={'Stack'}
       machineCode={machineCode}
     />
-  )
+  );
 }
 

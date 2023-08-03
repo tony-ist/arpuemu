@@ -12,6 +12,6 @@ export function PMemViewer(props: PMemViewerPropTypes) {
       title={'Program Memory'}
       machineCode={machineCode}
     />
-  )
+  );
 }
 

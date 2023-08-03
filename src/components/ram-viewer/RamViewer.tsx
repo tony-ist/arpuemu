@@ -11,6 +11,6 @@ export function RamViewer(props: RamViewerPropTypes) {
 
   return (
     <Box>{ machineCodeStr }</Box>
-  )
+  );
 }
 

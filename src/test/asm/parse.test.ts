@@ -19,7 +19,7 @@ describe('parse', () => {
 
   describe('parseOperand', () => {
     it('should parse labels', () => {
-      expect(parseOperand('.label')).toEqual(Operand.fromLabel('.label'))
+      expect(parseOperand('.label')).toEqual(Operand.fromLabel('.label'));
     });
 
     it.each([
@@ -31,11 +31,11 @@ describe('parse', () => {
       ['0x1_F', 0x1F],
       ['0b1010_0011', 0b10100011],
     ])('should parse %s to be %s', (token, immediate) => {
-      expect(parseOperand(token)).toEqual(Operand.fromImmediate(token, immediate))
+      expect(parseOperand(token)).toEqual(Operand.fromImmediate(token, immediate));
     });
 
     it('should throw ParseError when immediate exceeds size in bits', () => {
-      expect(() => parseOperand('0x100', 8)).toThrow(ParseError)
+      expect(() => parseOperand('0x100', 8)).toThrow(ParseError);
     });
   });
 });

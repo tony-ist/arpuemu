@@ -3,8 +3,8 @@ import { isData } from './util.ts';
 import { INSTRUCTION_MNEMONICS } from './mnemonics.ts';
 
 export class AsmLine {
-  private readonly isData: boolean
-  private readonly mnemonic: string
+  private readonly isData: boolean;
+  private readonly mnemonic: string;
   private readonly operands: Operand[];
   private readonly sizeInBytes: number;
   private readonly opcode: number;
@@ -21,7 +21,7 @@ export class AsmLine {
   getBytes() {
     const operandInts = this.operands.map((operand) => operand.toInt());
     if (operandInts.some((integer) => integer === undefined)) {
-      throw new Error(`Some operands that are labels were not filled with immediate values for line "${this.toString()}"`)
+      throw new Error(`Some operands that are labels were not filled with immediate values for line "${this.toString()}"`);
     }
     const operandInt1 = operandInts[0] as number;
     const operandInt2 = operandInts[1] ?? 0;

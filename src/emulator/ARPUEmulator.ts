@@ -1,6 +1,9 @@
 import { RAM_SIZE_IN_BYTES, STACK_SIZE_IN_BYTES } from '../const/emulator-constants.ts';
 import { AsmLine } from '../asm/AsmLine.ts';
 import { compileIntermediateRepresentation, IRToMachineCode } from '../asm/assemble.ts';
+import { Operand } from '../asm/Operand.ts';
+
+const BYTE = Math.pow(2, 8);
 
 export interface ARPUEmulatorState {
   // Intermediate representation with filled in offsets and immediates
@@ -24,6 +27,11 @@ export interface ARPUEmulatorState {
   // Random access memory
   RAM: number[];
   stack: number[];
+  ports: {
+    input: number[];
+    output: number[];
+  };
+  isWaitingPortInput: boolean;
 }
 
 export function defaultARPUEmulatorState(asmCode: string) {
@@ -40,28 +48,74 @@ export function defaultARPUEmulatorState(asmCode: string) {
     PMEM: IRToMachineCode(asmLines),
     RAM: new Array(RAM_SIZE_IN_BYTES).fill(0),
     stack: new Array(STACK_SIZE_IN_BYTES),
+    ports: {
+      input: [0, 0, 0, 0],
+      output: [0, 0, 0, 0],
+    },
+    isWaitingPortInput: false,
   };
 }
 
 export class ARPUEmulator {
   private readonly state: ARPUEmulatorState;
+  private readonly handlers: { [key: string]: (operands: Operand[]) => void } = {
+    INC: this.increment.bind(this),
+    IMM: this.loadImmediate.bind(this),
+    PLD: this.portLoad.bind(this),
+  };
 
   constructor(asmCode: string) {
     this.state = defaultARPUEmulatorState(asmCode);
   }
 
   public step() {
-    const instruction = this.state.asmLines[this.state.lineIndex];
-
-    if (instruction.getMnemonic() === 'IMM') {
-      const operands = instruction.getOperands();
-      const operand1Value = operands[0].toInt();
-      const operand3Value = operands[2].toInt();
-      this.state.registers[operand1Value] = operand3Value;
-      this.state.PC += 2;
-      this.state.lineIndex += 1;
-      // TODO: Flags
+    if (this.state.isWaitingPortInput) {
+      throw new Error('Cannot make a step while waiting for the port input');
     }
+
+    const instruction = this.state.asmLines[this.state.lineIndex];
+    const mnemonic = instruction.getMnemonic();
+    this.handlers[mnemonic](instruction.getOperands());
+  }
+
+  private increment(operands: Operand[]) {
+    const operand1Value = operands[0].toInt();
+    this.state.registers[operand1Value]++;
+    if (this.state.registers[operand1Value] > BYTE) {
+      this.state.registers[operand1Value] = 0;
+    }
+    this.state.PC += 1;
+    this.state.lineIndex += 1;
+  }
+
+  private loadImmediate(operands: Operand[]) {
+    const destinationRegisterIndex = operands[0].toInt();
+    const immediate = operands[2].toInt();
+    this.state.registers[destinationRegisterIndex] = immediate;
+    this.state.PC += 2;
+    this.state.lineIndex += 1;
+  }
+
+  public portInput(value: number) {
+    if (!this.state.isWaitingPortInput) {
+      throw new Error('Cannot input to port while not waiting for port input');
+    }
+
+    const asmLine = this.state.asmLines[this.state.lineIndex];
+    if (asmLine.getMnemonic() !== 'PLD') {
+      throw new Error('Illegal state: current instruction is not PLD but we are waiting for port input');
+    }
+
+    const portIndex = asmLine.getOperands()[1].toInt();
+    this.state.ports.input[portIndex] = value;
+  }
+
+  private portLoad(operands: Operand[]) {
+    // const registerIndex = operands[0].toInt();
+    // const portIndex = operands[1].toInt();
+    this.state.isWaitingPortInput = true;
+    // this.state.PC += 1;
+    // this.state.lineIndex += 1;
   }
 
   public getProgramMemory() {

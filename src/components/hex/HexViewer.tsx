@@ -15,6 +15,6 @@ export function HexViewer(props: HexViewerPropTypes) {
       <Box>{ title }</Box>
       <Box>{ machineCodeStr }</Box>
     </Box>
-  )
+  );
 }
 

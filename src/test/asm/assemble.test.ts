@@ -14,7 +14,7 @@ function readFileLines(filepath: string) {
 function assertProgram(name: string) {
   const prefix = 'src/test/asm/programs';
   const expectedCode = readFileLines(path.join(prefix, `${name}.hex`)).join(' ').trim();
-  const asmCode = readFileLines(path.join(prefix, `${name}.s`))
+  const asmCode = readFileLines(path.join(prefix, `${name}.s`));
   const machineCode = assembleLines(asmCode);
   const actualCode = toHex(machineCode).join(' ');
   expect(actualCode).toEqual(expectedCode);
@@ -46,11 +46,11 @@ describe('assemble', () => {
       const actual = parseAsmLines([
         '.a',
         'DW 3',
-      ])
+      ]);
       expect(actual.length).toEqual(1);
-      expect(actual[0].getLabel()).toEqual('.a')
+      expect(actual[0].getLabel()).toEqual('.a');
     });
-  })
+  });
 
   describe('fillOffsets', () => {
     it('should fill offsets', () => {
@@ -59,15 +59,15 @@ describe('assemble', () => {
         'IMM R2 0 .a',
         'ADD R1 R2',
         'DEC R3',
-      ])
+      ]);
       const actual = fillOffsets(asmLines);
       expect(actual.length).toEqual(4);
-      expect(actual[0].getOffsetInBytes()).toEqual(0)
-      expect(actual[1].getOffsetInBytes()).toEqual(0)
-      expect(actual[2].getOffsetInBytes()).toEqual(2)
-      expect(actual[3].getOffsetInBytes()).toEqual(3)
+      expect(actual[0].getOffsetInBytes()).toEqual(0);
+      expect(actual[1].getOffsetInBytes()).toEqual(0);
+      expect(actual[2].getOffsetInBytes()).toEqual(2);
+      expect(actual[3].getOffsetInBytes()).toEqual(3);
     });
-  })
+  });
 
   describe('fillImmediates', () => {
     it('should fill immediates for first address', () => {
@@ -79,18 +79,18 @@ describe('assemble', () => {
       const filledOffsetsAsmLines = fillOffsets(asmLines);
       const actual = fillImmediates(filledOffsetsAsmLines);
       expect(actual.length).toEqual(2);
-      expect(actual[1].getOperands()[2]).toEqual(Operand.fromImmediate('.a', 3, '.a'))
+      expect(actual[1].getOperands()[2]).toEqual(Operand.fromImmediate('.a', 3, '.a'));
     });
     it('should fill immediates for last address', () => {
       const asmLines = parseAsmLines([
         'IMM R2 0 .a',
         '.a',
         'DW 3',
-      ])
+      ]);
       const filledOffsetsAsmLines = fillOffsets(asmLines);
       const actual = fillImmediates(filledOffsetsAsmLines);
       expect(actual.length).toEqual(2);
-      expect(actual[0].getOperands()[2]).toEqual(Operand.fromImmediate('.a', 3, '.a'))
+      expect(actual[0].getOperands()[2]).toEqual(Operand.fromImmediate('.a', 3, '.a'));
     });
   });
 });
