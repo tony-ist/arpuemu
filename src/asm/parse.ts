@@ -10,7 +10,7 @@ import {
   isInstruction,
   isLabel,
   isRegister
-} from './util.ts';
+} from './asm-util.ts';
 
 export function parseAsmLine(line: string) {
   const mnemonic = parseMnemonic(line);

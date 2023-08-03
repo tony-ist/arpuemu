@@ -1,5 +1,5 @@
 import { Operand } from './Operand';
-import { isData } from './util.ts';
+import { isData } from './asm-util.ts';
 import { INSTRUCTION_MNEMONICS } from './mnemonics.ts';
 
 export class AsmLine {

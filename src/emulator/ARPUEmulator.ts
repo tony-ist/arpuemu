@@ -1,9 +1,8 @@
-import { RAM_SIZE_IN_BYTES, STACK_SIZE_IN_BYTES } from '../const/emulator-constants.ts';
+import { BYTE, RAM_SIZE_IN_BYTES, STACK_SIZE_IN_BYTES } from '../const/emulator-constants.ts';
 import { AsmLine } from '../asm/AsmLine.ts';
 import { compileIntermediateRepresentation, IRToMachineCode } from '../asm/assemble.ts';
 import { Operand } from '../asm/Operand.ts';
-
-const BYTE = Math.pow(2, 8);
+import { isBitSet } from '../util/common-util.ts';
 
 export interface ARPUEmulatorState {
   // Intermediate representation with filled in offsets and immediates
@@ -15,13 +14,13 @@ export interface ARPUEmulatorState {
   // Program counter
   PC: number;
   // Zero flag
-  ZF: number;
+  ZF: boolean;
   // Carry out flag
-  COUTF: number;
+  COUTF: boolean;
   // Most significant bit flag
-  MSBF: number;
+  MSBF: boolean;
   // Least significant bit flag
-  LSBF: number;
+  LSBF: boolean;
   // Program memory
   PMEM: number[];
   // Random access memory
@@ -39,13 +38,13 @@ export function defaultARPUEmulatorState(asmCode: string) {
     lineIndex: 0,
     registers: [0, 0, 0, 0],
     PC: 0,
-    ZF: 0,
-    COUTF: 0,
-    MSBF: 0,
-    LSBF: 0,
+    ZF: false,
+    COUTF: false,
+    MSBF: false,
+    LSBF: false,
     PMEM: IRToMachineCode(asmLines),
     RAM: new Array(RAM_SIZE_IN_BYTES).fill(0),
-    stack: new Array(STACK_SIZE_IN_BYTES),
+    stack: new Array(STACK_SIZE_IN_BYTES).fill(0),
     inputPorts: [0, 0, 0, 0],
     outputPorts: [0, 0, 0, 0],
     isWaitingPortInput: false,
@@ -59,6 +58,7 @@ export class ARPUEmulator {
     IMM: this.loadImmediate.bind(this),
     PLD: this.portLoad.bind(this),
     PST: this.portStore.bind(this),
+    BRA: this.branch.bind(this),
   };
 
   constructor(asmCode: string) {
@@ -122,6 +122,37 @@ export class ARPUEmulator {
     this.state.outputPorts[portIndex] = this.state.registers[sourceRegisterIndex];
     this.state.PC += 1;
     this.state.lineIndex += 1;
+  }
+
+  private branch(operands: Operand[]) {
+    const destinationOffset = operands[2].toInt();
+
+    if (this.shouldJump(operands)) {
+      const jumpToIndex = this.state.asmLines.findIndex(
+        (asmLine) => asmLine.getOffsetInBytes() === destinationOffset
+      );
+      this.state.PC = destinationOffset;
+      this.state.lineIndex = jumpToIndex;
+    } else {
+      this.state.PC += 2;
+      this.state.lineIndex += 1;
+    }
+  }
+
+  private shouldJump(operands: Operand[]) {
+    const condition = operands[0].toInt();
+    const flags = operands[1].toInt();
+    const isConditional = isBitSet(flags, 0);
+    const isNegate = isBitSet(flags, 1);
+
+    if (!isConditional) {
+      return true;
+    }
+
+    const stateFlags = [this.state.ZF, this.state.COUTF, this.state.MSBF, this.state.LSBF];
+    const flag = stateFlags[condition];
+
+    return flag !== isNegate;
   }
 
   public getProgramMemory() {

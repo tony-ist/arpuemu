@@ -63,4 +63,130 @@ describe('ARPUEmulator', () => {
       lineIndex: 2,
     });
   });
+
+  describe('branch', () => {
+    describe('unconditional', () => {
+      it('should make a forward jump anyway', () => {
+        const asmLines = [
+          'BRA 0 0 .branch',
+          'IMM R1 0 1',
+          '.branch',
+          'IMM R1 0 2',
+        ];
+        const asmCode = asmLines.join('\n');
+        const defaultState = defaultARPUEmulatorState(asmCode);
+        const emulator = new ARPUEmulator(asmCode);
+        emulator.step();
+        expect(emulator.getState()).toEqual({
+          ...defaultState,
+          PC: 4,
+          lineIndex: 2,
+        });
+      });
+
+      it('should make a backward jump anyway', () => {
+        const asmLines = [
+          '.branch',
+          'IMM R1 0 2',
+          'BRA 0 0 .branch',
+          'IMM R1 0 1',
+        ];
+        const asmCode = asmLines.join('\n');
+        const defaultState = defaultARPUEmulatorState(asmCode);
+        const emulator = new ARPUEmulator(asmCode);
+        emulator.getState().PC = 2;
+        emulator.getState().lineIndex = 1;
+        emulator.step();
+        expect(emulator.getState()).toEqual({
+          ...defaultState,
+          PC: 0,
+          lineIndex: 0,
+        });
+      });
+
+    });
+
+    describe('conditional', () => {
+      describe('without negate', () => {
+        it('should make a jump when condition ZF is true', () => {
+          const asmLines = [
+            'BRA 0 0b01 .branch',
+            'IMM R1 0 1',
+            '.branch',
+            'IMM R1 0 2',
+          ];
+          const asmCode = asmLines.join('\n');
+          const defaultState = defaultARPUEmulatorState(asmCode);
+          const emulator = new ARPUEmulator(asmCode);
+          emulator.getState().ZF = true;
+          emulator.step();
+          expect(emulator.getState()).toEqual({
+            ...defaultState,
+            // TODO: ZF should be false after jump if PC != 0
+            ZF: true,
+            PC: 4,
+            lineIndex: 2,
+          });
+        });
+
+        it('should make a jump when condition COUT is true', () => {
+          const asmLines = [
+            'BRA 1 0b01 .branch',
+            'IMM R1 0 1',
+            '.branch',
+            'IMM R1 0 2',
+          ];
+          const asmCode = asmLines.join('\n');
+          const defaultState = defaultARPUEmulatorState(asmCode);
+          const emulator = new ARPUEmulator(asmCode);
+          emulator.getState().COUTF = true;
+          emulator.step();
+          expect(emulator.getState()).toEqual({
+            ...defaultState,
+            COUTF: true,
+            PC: 4,
+            lineIndex: 2,
+          });
+        });
+      });
+
+      describe('with negate', () => {
+        it('should make a jump when condition ZF is false', () => {
+          const asmLines = [
+            'BRA 0 0b11 .branch',
+            'IMM R1 0 1',
+            '.branch',
+            'IMM R1 0 2',
+          ];
+          const asmCode = asmLines.join('\n');
+          const defaultState = defaultARPUEmulatorState(asmCode);
+          const emulator = new ARPUEmulator(asmCode);
+          emulator.step();
+          expect(emulator.getState()).toEqual({
+            ...defaultState,
+            PC: 4,
+            lineIndex: 2,
+          });
+        });
+
+        it('should make a jump when condition COUT is false', () => {
+          const asmLines = [
+            'BRA 1 0b11 .branch',
+            'IMM R1 0 1',
+            '.branch',
+            'IMM R1 0 2',
+          ];
+          const asmCode = asmLines.join('\n');
+          const defaultState = defaultARPUEmulatorState(asmCode);
+          const emulator = new ARPUEmulator(asmCode);
+          emulator.step();
+          expect(emulator.getState()).toEqual({
+            ...defaultState,
+            PC: 4,
+            lineIndex: 2,
+          });
+        });
+      });
+    });
+  });
 });

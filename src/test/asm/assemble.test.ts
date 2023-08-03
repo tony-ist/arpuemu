@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { describe, expect, it } from 'vitest';
 import { assembleLines, fillImmediates, fillOffsets } from '../../asm/assemble.ts';
-import { toHex } from '../../asm/util.ts';
+import { toHex } from '../../asm/asm-util.ts';
 import { parseAsmLines } from '../../asm/parse.ts';
 import { Operand } from '../../asm/Operand.ts';
 
