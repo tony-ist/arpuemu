@@ -64,7 +64,7 @@ describe('ARPUEmulator', () => {
     });
   });
 
-  describe('branch', () => {
+  describe('branch via BRA instruction', () => {
     describe('unconditional', () => {
       it('should make a forward jump anyway', () => {
         const asmLines = [

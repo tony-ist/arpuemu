@@ -149,8 +149,7 @@ export class ARPUEmulator {
       return true;
     }
 
-    const stateFlags = [this.state.ZF, this.state.COUTF, this.state.MSBF, this.state.LSBF];
-    const flag = stateFlags[condition];
+    const flag = this.getFlags()[condition];
 
     return flag !== isNegate;
   }
@@ -161,6 +160,10 @@ export class ARPUEmulator {
 
   public getRegisters() {
     return this.state.registers;
+  }
+
+  public getFlags() {
+    return [this.state.ZF, this.state.COUTF, this.state.MSBF, this.state.LSBF];
   }
 
   public getState() {

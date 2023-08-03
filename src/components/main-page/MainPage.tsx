@@ -6,6 +6,9 @@ import { PMemViewer } from '../pmem-viewer/PMemViewer.tsx';
 import { RegViewer } from '../reg-viewer/RegViewer.tsx';
 import styles from '../App.module.css';
 import { EmulatorContext } from '../App.tsx';
+import { FlagsViewer } from '../flags-viewer/FlagsViewer.tsx';
+import { HexViewer } from '../hex/HexViewer.tsx';
+import { toHex } from '../../asm/asm-util.ts';
 
 export function MainPage() {
   const { initEmulator, emulatorState, step: emulatorStep } = useContext(EmulatorContext);
@@ -58,19 +61,33 @@ export function MainPage() {
         </Button>
         {
           emulatorState &&
+          <Box>
+            <Box>PC {toHex([emulatorState.PC])}</Box>
             <PMemViewer
-                machineCode={emulatorState.PMEM}
+              machineCode={emulatorState.PMEM}
             />
-        }
-        {
-          emulatorState &&
             <RegViewer
-                registers={emulatorState.registers}
+              registers={emulatorState.registers}
             />
+            <FlagsViewer
+              ZF={emulatorState.ZF}
+              COUTF={emulatorState.COUTF}
+              MSBF={emulatorState.MSBF}
+              LSBF={emulatorState.LSBF}
+            />
+            <HexViewer
+              title="Input Ports"
+              machineCode={emulatorState.inputPorts}
+            />
+            <HexViewer
+              title="Output Ports"
+              machineCode={emulatorState.outputPorts}
+            />
+          </Box>
         }
         {
           error &&
-            <Box className={styles.errorContainer}>{error}</Box>
+          <Box className={styles.errorContainer}>{error}</Box>
         }
       </Box>
     </>
