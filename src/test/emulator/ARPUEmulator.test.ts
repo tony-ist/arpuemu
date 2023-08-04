@@ -370,27 +370,51 @@ describe('ARPUEmulator', () => {
     expect(emulator.getState()).toEqual({
       ...defaultState,
       registers: [5, 3, 0, 0],
+      LSBF: true,
       PC: 1,
       lineIndex: 1,
       cycle: 1,
     });
   });
 
-  it('should subtract via SUB instruction', () => {
-    const asmLines = [
-      'SUB R1 R2',
-    ];
-    const asmCode = asmLines.join('\n');
-    const defaultState = defaultARPUEmulatorState(asmCode);
-    const emulator = new ARPUEmulator(asmCode);
-    emulator.getState().registers = [3, 2, 0, 0];
-    emulator.step();
-    expect(emulator.getState()).toEqual({
-      ...defaultState,
-      registers: [1, 2, 0, 0],
-      PC: 1,
-      lineIndex: 1,
-      cycle: 1,
+  describe('subtract via SUB instruction', () => {
+    it('should subtract a > b', () => {
+      const asmLines = [
+        'SUB R1 R2',
+      ];
+      const asmCode = asmLines.join('\n');
+      const defaultState = defaultARPUEmulatorState(asmCode);
+      const emulator = new ARPUEmulator(asmCode);
+      emulator.getState().registers = [3, 2, 0, 0];
+      emulator.step();
+      expect(emulator.getState()).toEqual({
+        ...defaultState,
+        registers: [1, 2, 0, 0],
+        LSBF: true,
+        COUTF: true,
+        PC: 1,
+        lineIndex: 1,
+        cycle: 1,
+      });
+    });
+
+    it('should subtract a < b', () => {
+      const asmLines = [
+        'SUB R1 R2',
+      ];
+      const asmCode = asmLines.join('\n');
+      const defaultState = defaultARPUEmulatorState(asmCode);
+      const emulator = new ARPUEmulator(asmCode);
+      emulator.getState().registers = [1, 3, 0, 0];
+      emulator.step();
+      expect(emulator.getState()).toEqual({
+        ...defaultState,
+        registers: [0b1111_1110, 3, 0, 0],
+        MSBF: true,
+        PC: 1,
+        lineIndex: 1,
+        cycle: 1,
+      });
     });
   });
 

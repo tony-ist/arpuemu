@@ -1,9 +1,15 @@
+import { WORD_SIZE } from '../const/emulator-constants.ts';
+
 export function isBitSet(value: number, bitIndex: number) {
   return (value >> bitIndex) % 2 === 1;
 }
 
 export function bitwiseNot(x: number) {
-  return ~x & 0b1111_1111;
+  return toWord(~x);
+}
+
+export function toWord(x: number) {
+  return x & (WORD_SIZE - 1);
 }
 
 export function groupElements<T>(array: T[], groupSize: number) {

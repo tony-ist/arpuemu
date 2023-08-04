@@ -2,7 +2,7 @@ import { BITNESS, RAM_SIZE_IN_BYTES, WORD_SIZE } from '../const/emulator-constan
 import { AsmLine } from '../asm/AsmLine.ts';
 import { compileIntermediateRepresentation, IRToMachineCode } from '../asm/assemble.ts';
 import { Operand } from '../asm/Operand.ts';
-import { bitwiseNot, isBitSet } from '../util/common-util.ts';
+import { bitwiseNot, isBitSet, toWord } from '../util/common-util.ts';
 
 export interface ARPUEmulatorState {
   // Intermediate representation with filled in offsets and immediates
@@ -91,8 +91,14 @@ export class ARPUEmulator {
   private add(operands: Operand[]) {
     const destinationRegisterIndex = operands[0].toInt();
     const sourceRegisterIndex = operands[1].toInt();
-    this.state.registers[destinationRegisterIndex] =
-      this.state.registers[sourceRegisterIndex] + this.state.registers[destinationRegisterIndex];
+    let newValue = this.state.registers[sourceRegisterIndex] + this.state.registers[destinationRegisterIndex];
+    this.state.COUTF = false;
+    if (newValue >= WORD_SIZE) {
+      newValue = toWord(newValue);
+      this.state.COUTF = true;
+    }
+    this.state.registers[destinationRegisterIndex] = newValue;
+    this.updateFlags(newValue);
     this.state.PC += 1;
     this.state.lineIndex += 1;
     this.state.cycle += 1;
@@ -101,8 +107,14 @@ export class ARPUEmulator {
   private subtract(operands: Operand[]) {
     const destinationRegisterIndex = operands[0].toInt();
     const sourceRegisterIndex = operands[1].toInt();
-    this.state.registers[destinationRegisterIndex] =
-      this.state.registers[destinationRegisterIndex] - this.state.registers[sourceRegisterIndex];
+    let newValue = this.state.registers[destinationRegisterIndex] - this.state.registers[sourceRegisterIndex];
+    this.state.COUTF = true;
+    if (newValue < 0) {
+      newValue = toWord(newValue);
+      this.state.COUTF = false;
+    }
+    this.state.registers[destinationRegisterIndex] = newValue;
+    this.updateFlags(newValue);
     this.state.PC += 1;
     this.state.lineIndex += 1;
     this.state.cycle += 1;
