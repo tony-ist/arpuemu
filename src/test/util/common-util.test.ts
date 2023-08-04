@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { groupElements, isBitSet } from '../../util/common-util.ts';
+import { bitwiseNot, groupElements, isBitSet } from '../../util/common-util.ts';
 
 describe('isBitSet', () => {
   it.each([
@@ -9,8 +9,19 @@ describe('isBitSet', () => {
     [2, false],
     [3, true],
     [4, false],
-  ])('for 0b1011 and position % should return %', (position, expected) => {
+  ])('for 0b1011 and position %s should return %s', (position, expected) => {
     expect(isBitSet(0b1011, position)).toEqual(expected);
+  });
+});
+
+describe('bitwiseNot', () => {
+  it.each([
+    [0, 0b1111_1111],
+    [1, 0b1111_1110],
+    [42, 0b1101_0101],
+    [255, 0],
+  ])('for %s should return %s', (x, expected) => {
+    expect(bitwiseNot(x)).toEqual(expected);
   });
 });
 

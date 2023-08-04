@@ -2,7 +2,7 @@ import { BITNESS, RAM_SIZE_IN_BYTES, WORD_SIZE } from '../const/emulator-constan
 import { AsmLine } from '../asm/AsmLine.ts';
 import { compileIntermediateRepresentation, IRToMachineCode } from '../asm/assemble.ts';
 import { Operand } from '../asm/Operand.ts';
-import { isBitSet } from '../util/common-util.ts';
+import { bitwiseNot, isBitSet } from '../util/common-util.ts';
 
 export interface ARPUEmulatorState {
   // Intermediate representation with filled in offsets and immediates
@@ -70,6 +70,7 @@ export class ARPUEmulator {
     ADD: this.add.bind(this),
     SUB: this.subtract.bind(this),
     RSH: this.rightShift.bind(this),
+    BIT: this.bitwise.bind(this),
     MOV: this.move.bind(this),
   };
 
@@ -144,6 +145,40 @@ export class ARPUEmulator {
     this.state.registers[destinationRegisterIndex] = newValue;
     this.updateFlags(newValue);
     this.state.PC += 1;
+    this.state.lineIndex += 1;
+    this.state.cycle += 1;
+  }
+
+  private bitwise(operands: Operand[]) {
+    const destinationRegisterIndex = operands[0].toInt();
+    const sourceRegisterIndex = operands[1].toInt();
+    const flags = operands[2].toInt();
+    const isAnd = isBitSet(flags, 7);
+    const isOr = isBitSet(flags, 6);
+    const isXor = isBitSet(flags, 5);
+    const isInvert = isBitSet(flags, 4);
+    const isNot = isBitSet(flags, 3);
+
+    if (isAnd) {
+      this.state.registers[destinationRegisterIndex] =
+        this.state.registers[destinationRegisterIndex] & this.state.registers[sourceRegisterIndex];
+    } else if (isOr) {
+      this.state.registers[destinationRegisterIndex] =
+        this.state.registers[destinationRegisterIndex] | this.state.registers[sourceRegisterIndex];
+    } else if (isXor) {
+      this.state.registers[destinationRegisterIndex] =
+        this.state.registers[destinationRegisterIndex] ^ this.state.registers[sourceRegisterIndex];
+    }
+
+    if (isInvert) {
+      this.state.registers[destinationRegisterIndex] = bitwiseNot(this.state.registers[destinationRegisterIndex]);
+    }
+
+    if (isNot) {
+      this.state.registers[destinationRegisterIndex] = bitwiseNot(this.state.registers[sourceRegisterIndex]);
+    }
+
+    this.state.PC += 2;
     this.state.lineIndex += 1;
     this.state.cycle += 1;
   }
