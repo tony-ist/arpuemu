@@ -12,7 +12,7 @@ IMM R3 0 .b
 
 .start
 ADD R1 R2
-DEC R3
+DEC R3 R3
 BRA 0b00 0b11 .start // Branch to start if not zero flag
 IMM R4 0 0
 STR R1 R4
