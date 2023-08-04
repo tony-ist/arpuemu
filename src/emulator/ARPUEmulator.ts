@@ -64,6 +64,7 @@ export class ARPUEmulator {
     SOP: this.stackOperation.bind(this),
     CAL: this.call.bind(this),
     RET: this.return.bind(this),
+    STR: this.ramStore.bind(this),
   };
 
   constructor(asmCode: string) {
@@ -80,6 +81,7 @@ export class ARPUEmulator {
     this.handlers[mnemonic](instruction.getOperands());
   }
 
+  // TODO: R1 = R2 + 1
   private increment(operands: Operand[]) {
     const operand1Value = operands[0].toInt();
     this.state.registers[operand1Value]++;
@@ -204,9 +206,22 @@ export class ARPUEmulator {
     const returnLineIndex = this.state.asmLines.findIndex(
       (asmLine) => asmLine.getOffsetInBytes() === destinationOffset
     );
-    
+
     this.state.PC = destinationOffset;
     this.state.lineIndex = returnLineIndex;
+    this.state.cycle += 1;
+  }
+
+  private ramStore(operands: Operand[]) {
+    const sourceRegisterIndex = operands[0].toInt();
+    const pointerRegisterIndex = operands[1].toInt();
+    const valueToWrite = this.state.registers[sourceRegisterIndex];
+    const destinationRAMAddress = this.state.registers[pointerRegisterIndex];
+
+    this.state.RAM[destinationRAMAddress] = valueToWrite;
+
+    this.state.PC += 1;
+    this.state.lineIndex += 1;
     this.state.cycle += 1;
   }
 

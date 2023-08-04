@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ARPUEmulator, defaultARPUEmulatorState } from '../../emulator/ARPUEmulator.ts';
+import { RAM_SIZE_IN_BYTES } from '../../const/emulator-constants.ts';
 
 describe('ARPUEmulator', () => {
   it('should load immediate via IMM instruction', () => {
@@ -294,6 +295,28 @@ describe('ARPUEmulator', () => {
       stack: [],
       PC: 2,
       lineIndex: 1,
+      cycle: 2,
+    });
+  });
+
+  it('should store in RAM via STR instruction', () => {
+    const asmLines = [
+      'IMM 0 0 42',
+      'STR R1 R2',
+    ];
+    const asmCode = asmLines.join('\n');
+    const defaultState = defaultARPUEmulatorState(asmCode);
+    const emulator = new ARPUEmulator(asmCode);
+    emulator.step();
+    emulator.step();
+    const RAM = new Array(RAM_SIZE_IN_BYTES).fill(0);
+    RAM[0] = 42;
+    expect(emulator.getState()).toEqual({
+      ...defaultState,
+      registers: [42, 0, 0, 0],
+      RAM,
+      PC: 3,
+      lineIndex: 2,
       cycle: 2,
     });
   });
