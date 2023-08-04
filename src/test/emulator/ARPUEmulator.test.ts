@@ -376,6 +376,24 @@ describe('ARPUEmulator', () => {
     });
   });
 
+  it('should subtract via SUB instruction', () => {
+    const asmLines = [
+      'SUB R1 R2',
+    ];
+    const asmCode = asmLines.join('\n');
+    const defaultState = defaultARPUEmulatorState(asmCode);
+    const emulator = new ARPUEmulator(asmCode);
+    emulator.getState().registers = [3, 2, 0, 0];
+    emulator.step();
+    expect(emulator.getState()).toEqual({
+      ...defaultState,
+      registers: [1, 2, 0, 0],
+      PC: 1,
+      lineIndex: 1,
+      cycle: 1,
+    });
+  });
+
   it('should move via MOV instruction', () => {
     const asmLines = [
       'MOV R1 R2',
