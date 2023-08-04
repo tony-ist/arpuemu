@@ -2,13 +2,11 @@
 
 IMM R1 0 5
 SOP R1 0
-IMM 0 0 .procedure
-CAL R1
+CAL 0 0 .procedure
 
 IMM R1 0 7
 SOP R1 0
-IMM 0 0 .procedure
-CAL R1
+CAL 0 0 .procedure
 
 .end
 BRA 0b00 0b00 .end
