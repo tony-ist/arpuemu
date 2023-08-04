@@ -69,6 +69,7 @@ export function MainPage() {
     <>
       <Box>
         <TextField
+          label='ASM Code'
           value={asmCode}
           onChange={(textArea) => setAsmCode(textArea.target.value)}
           multiline

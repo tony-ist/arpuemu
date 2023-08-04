@@ -341,4 +341,22 @@ describe('ARPUEmulator', () => {
       cycle: 1,
     });
   });
+
+  it('should add via ADD instruction', () => {
+    const asmLines = [
+      'ADD R1 R2',
+    ];
+    const asmCode = asmLines.join('\n');
+    const defaultState = defaultARPUEmulatorState(asmCode);
+    const emulator = new ARPUEmulator(asmCode);
+    emulator.getState().registers = [2, 3, 0, 0];
+    emulator.step();
+    expect(emulator.getState()).toEqual({
+      ...defaultState,
+      registers: [5, 3, 0, 0],
+      PC: 1,
+      lineIndex: 1,
+      cycle: 1,
+    });
+  });
 });

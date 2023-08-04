@@ -66,6 +66,7 @@ export class ARPUEmulator {
     RET: this.return.bind(this),
     STR: this.ramStore.bind(this),
     LOD: this.ramLoad.bind(this),
+    ADD: this.add.bind(this),
   };
 
   constructor(asmCode: string) {
@@ -80,6 +81,16 @@ export class ARPUEmulator {
     const instruction = this.state.asmLines[this.state.lineIndex];
     const mnemonic = instruction.getMnemonic();
     this.handlers[mnemonic](instruction.getOperands());
+  }
+
+  private add(operands: Operand[]) {
+    const destinationRegisterIndex = operands[0].toInt();
+    const sourceRegisterIndex = operands[1].toInt();
+    this.state.registers[destinationRegisterIndex] =
+      this.state.registers[sourceRegisterIndex] + this.state.registers[destinationRegisterIndex];
+    this.state.PC += 1;
+    this.state.lineIndex += 1;
+    this.state.cycle += 1;
   }
 
   private increment(operands: Operand[]) {

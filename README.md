@@ -31,7 +31,8 @@ If you are developing a production application, we recommend updating the config
 - Aliases
 - Linting
 - Error validation, display line number
-- Persistence via local storage
+- Persistence via local storage / code history
+- Handle word overflow
 
 ### UI Components
 - Program memory hex view
