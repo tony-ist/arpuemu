@@ -69,6 +69,7 @@ export class ARPUEmulator {
     LOD: this.ramLoad.bind(this),
     ADD: this.add.bind(this),
     SUB: this.subtract.bind(this),
+    RSH: this.rightShift.bind(this),
     MOV: this.move.bind(this),
   };
 
@@ -101,6 +102,15 @@ export class ARPUEmulator {
     const sourceRegisterIndex = operands[1].toInt();
     this.state.registers[destinationRegisterIndex] =
       this.state.registers[destinationRegisterIndex] - this.state.registers[sourceRegisterIndex];
+    this.state.PC += 1;
+    this.state.lineIndex += 1;
+    this.state.cycle += 1;
+  }
+
+  private rightShift(operands: Operand[]) {
+    const destinationRegisterIndex = operands[0].toInt();
+    const sourceRegisterIndex = operands[1].toInt();
+    this.state.registers[destinationRegisterIndex] = Math.floor(this.state.registers[sourceRegisterIndex] / 2);
     this.state.PC += 1;
     this.state.lineIndex += 1;
     this.state.cycle += 1;
