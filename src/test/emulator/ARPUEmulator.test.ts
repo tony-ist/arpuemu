@@ -261,10 +261,28 @@ describe('ARPUEmulator', () => {
 
   it('should call via CAL instruction', () => {
     const asmLines = [
-      'IMM R1 0 .procedure',
-      'CAL R1',
+      'CAL 0 0 .procedure',
       '.procedure',
       'IMM R1 0 0',
+    ];
+    const asmCode = asmLines.join('\n');
+    const defaultState = defaultARPUEmulatorState(asmCode);
+    const emulator = new ARPUEmulator(asmCode);
+    emulator.step();
+    expect(emulator.getState()).toEqual({
+      ...defaultState,
+      stack: [2],
+      PC: 2,
+      lineIndex: 1,
+      cycle: 1,
+    });
+  });
+
+  it('should return via RET instruction', () => {
+    const asmLines = [
+      'CAL 0 0 .procedure',
+      '.procedure',
+      'RET'
     ];
     const asmCode = asmLines.join('\n');
     const defaultState = defaultARPUEmulatorState(asmCode);
@@ -273,10 +291,9 @@ describe('ARPUEmulator', () => {
     emulator.step();
     expect(emulator.getState()).toEqual({
       ...defaultState,
-      registers: [3, 0, 0, 0],
-      outputPorts: [3, 0, 0, 0],
-      PC: 3,
-      lineIndex: 2,
+      stack: [],
+      PC: 2,
+      lineIndex: 1,
       cycle: 2,
     });
   });

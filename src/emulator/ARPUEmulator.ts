@@ -62,6 +62,8 @@ export class ARPUEmulator {
     PST: this.portStore.bind(this),
     BRA: this.branch.bind(this),
     SOP: this.stackOperation.bind(this),
+    CAL: this.call.bind(this),
+    RET: this.return.bind(this),
   };
 
   constructor(asmCode: string) {
@@ -172,13 +174,39 @@ export class ARPUEmulator {
       this.state.stack.push(valueToPush);
     } else {
       const destinationRegisterIndex = operands[0].toInt();
-      const poppedValue = this.state.stack.pop();
-      const valueToWrite = poppedValue === undefined ? 0 : poppedValue;
-      this.state.registers[destinationRegisterIndex] = valueToWrite;
+      this.state.registers[destinationRegisterIndex] = this.popStack();
     }
 
     this.state.PC += 1;
     this.state.lineIndex += 1;
+    this.state.cycle += 1;
+  }
+
+  private popStack() {
+    const poppedValue = this.state.stack.pop();
+    return poppedValue === undefined ? 0 : poppedValue;
+  }
+
+  private call(operands: Operand[]) {
+    const destinationOffset = operands[2].toInt();
+    const procedureIndex = this.state.asmLines.findIndex(
+      (asmLine) => asmLine.getOffsetInBytes() === destinationOffset
+    );
+
+    this.state.stack.push(this.state.PC + 2);
+    this.state.PC = destinationOffset;
+    this.state.lineIndex = procedureIndex;
+    this.state.cycle += 1;
+  }
+
+  private return() {
+    const destinationOffset = this.popStack();
+    const returnLineIndex = this.state.asmLines.findIndex(
+      (asmLine) => asmLine.getOffsetInBytes() === destinationOffset
+    );
+    
+    this.state.PC = destinationOffset;
+    this.state.lineIndex = returnLineIndex;
     this.state.cycle += 1;
   }
 
