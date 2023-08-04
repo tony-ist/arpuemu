@@ -13,7 +13,7 @@ export function FlagsViewer(props: FlagsViewerPropTypes) {
   return (
     <HexViewer
       title={'Flags'}
-      machineCode={[ZF, COUTF, MSBF, LSBF].map((flag) => flag ? 1 : 0)}
+      binaryData={[ZF, COUTF, MSBF, LSBF].map((flag) => flag ? 1 : 0)}
     />
   );
 }

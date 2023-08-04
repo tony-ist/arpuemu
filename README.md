@@ -33,6 +33,7 @@ If you are developing a production application, we recommend updating the config
 - Error validation, display line number
 - Persistence via local storage / code history
 - Handle word overflow
+- Display arrow to the left of the code row being executed
 
 ### UI Components
 - Program memory hex view

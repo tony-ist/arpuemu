@@ -12,7 +12,7 @@ export function PMemViewer(props: PMemViewerPropTypes) {
   return (
     <HexViewer
       title={'Program Memory'}
-      machineCode={machineCode}
+      binaryData={machineCode}
       highlightByte={highlightByte}
       highlightSize={highlightSize}
     />

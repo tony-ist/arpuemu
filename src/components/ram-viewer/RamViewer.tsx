@@ -10,7 +10,7 @@ export function RamViewer(props: RamViewerPropTypes) {
   return (
     <HexViewer
       title={'RAM'}
-      machineCode={machineCode}
+      binaryData={machineCode}
     />
   );
 }

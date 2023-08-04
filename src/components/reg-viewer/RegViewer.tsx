@@ -10,7 +10,7 @@ export function RegViewer(props: RegViewerPropTypes) {
   return (
     <HexViewer
       title={'Registers'}
-      machineCode={registers}
+      binaryData={registers}
     />
   );
 }

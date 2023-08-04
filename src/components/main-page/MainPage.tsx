@@ -10,6 +10,7 @@ import { FlagsViewer } from '../flags-viewer/FlagsViewer.tsx';
 import { HexViewer } from '../hex/HexViewer.tsx';
 import { toHex } from '../../asm/asm-util.ts';
 import { StackViewer } from '../stack-viewer/StackViewer.tsx';
+import { RamViewer } from '../ram-viewer/RamViewer.tsx';
 
 export function MainPage() {
   const { initEmulator, emulatorState, step: emulatorStep, portInput } = useContext(EmulatorContext);
@@ -113,11 +114,14 @@ export function MainPage() {
             />
             <HexViewer
               title="Input Ports"
-              machineCode={emulatorState.inputPorts}
+              binaryData={emulatorState.inputPorts}
             />
             <HexViewer
               title="Output Ports"
-              machineCode={emulatorState.outputPorts}
+              binaryData={emulatorState.outputPorts}
+            />
+            <RamViewer
+              machineCode={emulatorState.RAM}
             />
           </Box>
         }

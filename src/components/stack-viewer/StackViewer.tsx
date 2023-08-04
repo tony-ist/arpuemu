@@ -12,7 +12,7 @@ export function StackViewer(props: StackViewerPropTypes) {
     <Box sx={{ minHeight: 43 }}>
       <HexViewer
         title={'Stack'}
-        machineCode={machineCode}
+        binaryData={machineCode}
       />
     </Box>
   );
