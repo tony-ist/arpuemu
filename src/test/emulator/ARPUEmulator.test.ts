@@ -258,4 +258,26 @@ describe('ARPUEmulator', () => {
       });
     });
   });
+
+  it('should call via CAL instruction', () => {
+    const asmLines = [
+      'IMM R1 0 .procedure',
+      'CAL R1',
+      '.procedure',
+      'IMM R1 0 0',
+    ];
+    const asmCode = asmLines.join('\n');
+    const defaultState = defaultARPUEmulatorState(asmCode);
+    const emulator = new ARPUEmulator(asmCode);
+    emulator.step();
+    emulator.step();
+    expect(emulator.getState()).toEqual({
+      ...defaultState,
+      registers: [3, 0, 0, 0],
+      outputPorts: [3, 0, 0, 0],
+      PC: 3,
+      lineIndex: 2,
+      cycle: 2,
+    });
+  });
 });

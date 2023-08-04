@@ -1,4 +1,4 @@
-import { RAM_SIZE_IN_BYTES, STACK_SIZE_IN_BYTES, WORD_SIZE } from '../const/emulator-constants.ts';
+import { RAM_SIZE_IN_BYTES, WORD_SIZE } from '../const/emulator-constants.ts';
 import { AsmLine } from '../asm/AsmLine.ts';
 import { compileIntermediateRepresentation, IRToMachineCode } from '../asm/assemble.ts';
 import { Operand } from '../asm/Operand.ts';
