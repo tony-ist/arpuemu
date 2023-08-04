@@ -25,6 +25,22 @@ describe('ARPUEmulator', () => {
       ...defaultARPUEmulatorState(asmCode),
       registers: [43, 42, 0, 0],
       PC: 1,
+      LSBF: true,
+      lineIndex: 1,
+      cycle: 1,
+    });
+  });
+
+  it('should decrement via DEC instruction', () => {
+    const asmCode = 'DEC R1 R2';
+    const emulator = new ARPUEmulator(asmCode);
+    emulator.getState().registers[1] = 42;
+    emulator.step();
+    expect(emulator.getState()).toEqual({
+      ...defaultARPUEmulatorState(asmCode),
+      registers: [41, 42, 0, 0],
+      PC: 1,
+      LSBF: true,
       lineIndex: 1,
       cycle: 1,
     });

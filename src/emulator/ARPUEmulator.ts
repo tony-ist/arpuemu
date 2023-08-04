@@ -1,4 +1,4 @@
-import { RAM_SIZE_IN_BYTES, WORD_SIZE } from '../const/emulator-constants.ts';
+import { BITNESS, RAM_SIZE_IN_BYTES, WORD_SIZE } from '../const/emulator-constants.ts';
 import { AsmLine } from '../asm/AsmLine.ts';
 import { compileIntermediateRepresentation, IRToMachineCode } from '../asm/assemble.ts';
 import { Operand } from '../asm/Operand.ts';
@@ -57,6 +57,7 @@ export class ARPUEmulator {
   private readonly state: ARPUEmulatorState;
   private readonly handlers: { [key: string]: (operands: Operand[]) => void } = {
     INC: this.increment.bind(this),
+    DEC: this.decrement.bind(this),
     IMM: this.loadImmediate.bind(this),
     PLD: this.portLoad.bind(this),
     PST: this.portStore.bind(this),
@@ -96,10 +97,30 @@ export class ARPUEmulator {
   private increment(operands: Operand[]) {
     const destinationRegisterIndex = operands[0].toInt();
     const sourceRegisterIndex = operands[1].toInt();
-    this.state.registers[destinationRegisterIndex] = this.state.registers[sourceRegisterIndex] + 1;
-    if (this.state.registers[destinationRegisterIndex] >= WORD_SIZE) {
-      this.state.registers[destinationRegisterIndex] = 0;
+    let newValue = this.state.registers[sourceRegisterIndex] + 1;
+    this.state.COUTF = false;
+    if (newValue >= WORD_SIZE) {
+      newValue = 0;
+      this.state.COUTF = true;
     }
+    this.state.registers[destinationRegisterIndex] = newValue;
+    this.updateFlags(newValue);
+    this.state.PC += 1;
+    this.state.lineIndex += 1;
+    this.state.cycle += 1;
+  }
+
+  private decrement(operands: Operand[]) {
+    const destinationRegisterIndex = operands[0].toInt();
+    const sourceRegisterIndex = operands[1].toInt();
+    let newValue = this.state.registers[sourceRegisterIndex] - 1;
+    this.state.COUTF = false;
+    if (newValue < 0) {
+      newValue = WORD_SIZE - 1;
+      this.state.COUTF = true;
+    }
+    this.state.registers[destinationRegisterIndex] = newValue;
+    this.updateFlags(newValue);
     this.state.PC += 1;
     this.state.lineIndex += 1;
     this.state.cycle += 1;
@@ -260,6 +281,12 @@ export class ARPUEmulator {
 
   public getFlags() {
     return [this.state.ZF, this.state.COUTF, this.state.MSBF, this.state.LSBF];
+  }
+
+  private updateFlags(value: number) {
+    this.state.ZF = value === 0;
+    this.state.MSBF = isBitSet(value, BITNESS - 1);
+    this.state.LSBF = isBitSet(value, 0);
   }
 
   public getState() {
