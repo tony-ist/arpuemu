@@ -1,0 +1,18 @@
+.emulatorStateContainer > * {
+  margin-bottom: 10px;
+}
+
+.errorContainer {
+  color: darkred;
+  margin-bottom: 10px;
+}
+
+.buttonsContainer {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+}
+
+.buttonsContainer > * {
+  margin-right: 5px;
+}
