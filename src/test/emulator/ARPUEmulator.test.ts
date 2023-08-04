@@ -17,12 +17,13 @@ describe('ARPUEmulator', () => {
   });
 
   it('should increment via INC instruction', () => {
-    const asmCode = 'INC R1';
+    const asmCode = 'INC R1 R2';
     const emulator = new ARPUEmulator(asmCode);
+    emulator.getState().registers[1] = 42;
     emulator.step();
     expect(emulator.getState()).toEqual({
       ...defaultARPUEmulatorState(asmCode),
-      registers: [1, 0, 0, 0],
+      registers: [43, 42, 0, 0],
       PC: 1,
       lineIndex: 1,
       cycle: 1,

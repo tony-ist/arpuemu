@@ -81,12 +81,12 @@ export class ARPUEmulator {
     this.handlers[mnemonic](instruction.getOperands());
   }
 
-  // TODO: R1 = R2 + 1
   private increment(operands: Operand[]) {
-    const operand1Value = operands[0].toInt();
-    this.state.registers[operand1Value]++;
-    if (this.state.registers[operand1Value] >= WORD_SIZE) {
-      this.state.registers[operand1Value] = 0;
+    const destinationRegisterIndex = operands[0].toInt();
+    const sourceRegisterIndex = operands[1].toInt();
+    this.state.registers[destinationRegisterIndex] = this.state.registers[sourceRegisterIndex] + 1;
+    if (this.state.registers[destinationRegisterIndex] >= WORD_SIZE) {
+      this.state.registers[destinationRegisterIndex] = 0;
     }
     this.state.PC += 1;
     this.state.lineIndex += 1;
