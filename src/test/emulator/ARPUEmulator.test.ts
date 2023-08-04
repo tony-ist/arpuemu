@@ -302,13 +302,12 @@ describe('ARPUEmulator', () => {
 
   it('should store in RAM via STR instruction', () => {
     const asmLines = [
-      'IMM 0 0 42',
       'STR R1 R2',
     ];
     const asmCode = asmLines.join('\n');
     const defaultState = defaultARPUEmulatorState(asmCode);
     const emulator = new ARPUEmulator(asmCode);
-    emulator.step();
+    emulator.getState().registers[0] = 42;
     emulator.step();
     const RAM = new Array(RAM_SIZE_IN_BYTES).fill(0);
     RAM[0] = 42;
@@ -316,9 +315,30 @@ describe('ARPUEmulator', () => {
       ...defaultState,
       registers: [42, 0, 0, 0],
       RAM,
-      PC: 3,
-      lineIndex: 2,
-      cycle: 2,
+      PC: 1,
+      lineIndex: 1,
+      cycle: 1,
+    });
+  });
+
+  it('should load from RAM via LOD instruction', () => {
+    const asmLines = [
+      'LOD R1 R2',
+    ];
+    const asmCode = asmLines.join('\n');
+    const defaultState = defaultARPUEmulatorState(asmCode);
+    const emulator = new ARPUEmulator(asmCode);
+    emulator.getState().RAM[0] = 42;
+    emulator.step();
+    const RAM = new Array(RAM_SIZE_IN_BYTES).fill(0);
+    RAM[0] = 42;
+    expect(emulator.getState()).toEqual({
+      ...defaultState,
+      registers: [42, 0, 0, 0],
+      RAM,
+      PC: 1,
+      lineIndex: 1,
+      cycle: 1,
     });
   });
 });
