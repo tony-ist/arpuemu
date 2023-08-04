@@ -2,6 +2,7 @@ import { MainPage } from './main-page/MainPage.tsx';
 import { createContext, useState } from 'react';
 import { ARPUEmulator, ARPUEmulatorState } from '../emulator/ARPUEmulator.ts';
 import { parseImmediateValue } from '../asm/parse.ts';
+import { WORD_SIZE } from '../const/emulator-constants.ts';
 
 export interface EmulatorAndStateType {
   emulator: ARPUEmulator;
@@ -66,6 +67,10 @@ export function App() {
     }
 
     const immediate = parseImmediateValue(value);
+
+    if (immediate >= WORD_SIZE) {
+      throw new Error('Port input value is more than or equal to 256 (1 byte)');
+    }
 
     emulatorAndState.emulator.portInput(immediate);
 

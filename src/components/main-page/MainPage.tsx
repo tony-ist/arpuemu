@@ -9,6 +9,7 @@ import { EmulatorContext } from '../App.tsx';
 import { FlagsViewer } from '../flags-viewer/FlagsViewer.tsx';
 import { HexViewer } from '../hex/HexViewer.tsx';
 import { toHex } from '../../asm/asm-util.ts';
+import { StackViewer } from '../stack-viewer/StackViewer.tsx';
 
 export function MainPage() {
   const { initEmulator, emulatorState, step: emulatorStep, portInput } = useContext(EmulatorContext);
@@ -53,6 +54,7 @@ export function MainPage() {
         }
 
         portInput(portInputValue);
+        setPortInputValue('');
         return;
       }
 
@@ -99,6 +101,9 @@ export function MainPage() {
             <RegViewer
               registers={emulatorState.registers}
             />
+            <StackViewer
+              machineCode={emulatorState.stack}
+            />
             <FlagsViewer
               ZF={emulatorState.ZF}
               COUTF={emulatorState.COUTF}
@@ -118,7 +123,7 @@ export function MainPage() {
         {
           emulatorState?.isWaitingPortInput &&
           <TextField
-            label="Port Input"
+            label="Port Input (dec, hex or bin)"
             value={portInputValue}
             onChange={(textArea) => setPortInputValue(textArea.target.value)}
           />

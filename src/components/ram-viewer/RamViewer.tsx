@@ -1,5 +1,4 @@
-import Box from '@mui/material/Box';
-import { toHex } from '../../asm/asm-util.ts';
+import { HexViewer } from '../hex/HexViewer.tsx';
 
 interface RamViewerPropTypes {
   machineCode: number[]
@@ -7,10 +6,12 @@ interface RamViewerPropTypes {
 
 export function RamViewer(props: RamViewerPropTypes) {
   const { machineCode } = props;
-  const machineCodeStr = toHex(machineCode).join(' ');
 
   return (
-    <Box>{ machineCodeStr }</Box>
+    <HexViewer
+      title={'RAM'}
+      machineCode={machineCode}
+    />
   );
 }
 

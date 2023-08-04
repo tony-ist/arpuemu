@@ -1,4 +1,4 @@
-import { BYTE, RAM_SIZE_IN_BYTES, STACK_SIZE_IN_BYTES } from '../const/emulator-constants.ts';
+import { RAM_SIZE_IN_BYTES, STACK_SIZE_IN_BYTES, WORD_SIZE } from '../const/emulator-constants.ts';
 import { AsmLine } from '../asm/AsmLine.ts';
 import { compileIntermediateRepresentation, IRToMachineCode } from '../asm/assemble.ts';
 import { Operand } from '../asm/Operand.ts';
@@ -45,7 +45,7 @@ export function defaultARPUEmulatorState(asmCode: string) {
     LSBF: false,
     PMEM: IRToMachineCode(asmLines),
     RAM: new Array(RAM_SIZE_IN_BYTES).fill(0),
-    stack: new Array(STACK_SIZE_IN_BYTES).fill(0),
+    stack: [],
     inputPorts: [0, 0, 0, 0],
     outputPorts: [0, 0, 0, 0],
     isWaitingPortInput: false,
@@ -61,6 +61,7 @@ export class ARPUEmulator {
     PLD: this.portLoad.bind(this),
     PST: this.portStore.bind(this),
     BRA: this.branch.bind(this),
+    SOP: this.stackOperation.bind(this),
   };
 
   constructor(asmCode: string) {
@@ -75,17 +76,17 @@ export class ARPUEmulator {
     const instruction = this.state.asmLines[this.state.lineIndex];
     const mnemonic = instruction.getMnemonic();
     this.handlers[mnemonic](instruction.getOperands());
-    this.state.cycle += 1;
   }
 
   private increment(operands: Operand[]) {
     const operand1Value = operands[0].toInt();
     this.state.registers[operand1Value]++;
-    if (this.state.registers[operand1Value] > BYTE) {
+    if (this.state.registers[operand1Value] >= WORD_SIZE) {
       this.state.registers[operand1Value] = 0;
     }
     this.state.PC += 1;
     this.state.lineIndex += 1;
+    this.state.cycle += 1;
   }
 
   private loadImmediate(operands: Operand[]) {
@@ -94,6 +95,7 @@ export class ARPUEmulator {
     this.state.registers[destinationRegisterIndex] = immediate;
     this.state.PC += 2;
     this.state.lineIndex += 1;
+    this.state.cycle += 1;
   }
 
   public portInput(value: number) {
@@ -126,6 +128,7 @@ export class ARPUEmulator {
     this.state.outputPorts[portIndex] = this.state.registers[sourceRegisterIndex];
     this.state.PC += 1;
     this.state.lineIndex += 1;
+    this.state.cycle += 1;
   }
 
   private branch(operands: Operand[]) {
@@ -141,6 +144,8 @@ export class ARPUEmulator {
       this.state.PC += 2;
       this.state.lineIndex += 1;
     }
+
+    this.state.cycle += 1;
   }
 
   private shouldJump(operands: Operand[]) {
@@ -156,6 +161,25 @@ export class ARPUEmulator {
     const flag = this.getFlags()[condition];
 
     return flag !== isNegate;
+  }
+
+  private stackOperation(operands: Operand[]) {
+    const isPush = operands[1].toInt() === 0;
+
+    if (isPush) {
+      const sourceRegisterIndex = operands[0].toInt();
+      const valueToPush = this.state.registers[sourceRegisterIndex];
+      this.state.stack.push(valueToPush);
+    } else {
+      const destinationRegisterIndex = operands[0].toInt();
+      const poppedValue = this.state.stack.pop();
+      const valueToWrite = poppedValue === undefined ? 0 : poppedValue;
+      this.state.registers[destinationRegisterIndex] = valueToWrite;
+    }
+
+    this.state.PC += 1;
+    this.state.lineIndex += 1;
+    this.state.cycle += 1;
   }
 
   public getProgramMemory() {

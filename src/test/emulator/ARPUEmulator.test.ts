@@ -11,6 +11,7 @@ describe('ARPUEmulator', () => {
       registers: [42, 0, 0, 0],
       PC: 2,
       lineIndex: 1,
+      cycle: 1,
     });
   });
 
@@ -23,6 +24,7 @@ describe('ARPUEmulator', () => {
       registers: [1, 0, 0, 0],
       PC: 1,
       lineIndex: 1,
+      cycle: 1,
     });
   });
 
@@ -42,6 +44,7 @@ describe('ARPUEmulator', () => {
       inputPorts: [2, 0, 0, 0],
       PC: 1,
       lineIndex: 1,
+      cycle: 1,
     });
   });
 
@@ -61,6 +64,7 @@ describe('ARPUEmulator', () => {
       outputPorts: [3, 0, 0, 0],
       PC: 3,
       lineIndex: 2,
+      cycle: 2,
     });
   });
 
@@ -81,6 +85,7 @@ describe('ARPUEmulator', () => {
           ...defaultState,
           PC: 4,
           lineIndex: 2,
+          cycle: 1,
         });
       });
 
@@ -101,6 +106,7 @@ describe('ARPUEmulator', () => {
           ...defaultState,
           PC: 0,
           lineIndex: 0,
+          cycle: 1,
         });
       });
 
@@ -126,6 +132,7 @@ describe('ARPUEmulator', () => {
             ZF: true,
             PC: 4,
             lineIndex: 2,
+            cycle: 1,
           });
         });
 
@@ -146,6 +153,7 @@ describe('ARPUEmulator', () => {
             COUTF: true,
             PC: 4,
             lineIndex: 2,
+            cycle: 1,
           });
         });
       });
@@ -166,6 +174,7 @@ describe('ARPUEmulator', () => {
             ...defaultState,
             PC: 4,
             lineIndex: 2,
+            cycle: 1,
           });
         });
 
@@ -184,8 +193,68 @@ describe('ARPUEmulator', () => {
             ...defaultState,
             PC: 4,
             lineIndex: 2,
+            cycle: 1,
           });
         });
+      });
+    });
+  });
+
+  describe('stack operation via SOP instruction', () => {
+    it('should push', () => {
+      const asmLines = [
+        'SOP R1 0',
+      ];
+      const asmCode = asmLines.join('\n');
+      const defaultState = defaultARPUEmulatorState(asmCode);
+      const emulator = new ARPUEmulator(asmCode);
+      emulator.getState().registers[0] = 42;
+      emulator.step();
+      expect(emulator.getState()).toEqual({
+        ...defaultState,
+        registers: [42, 0, 0, 0],
+        stack: [42],
+        PC: 1,
+        lineIndex: 1,
+        cycle: 1,
+      });
+    });
+
+    it('should pop', () => {
+      const asmLines = [
+        'SOP R1 1',
+      ];
+      const asmCode = asmLines.join('\n');
+      const defaultState = defaultARPUEmulatorState(asmCode);
+      const emulator = new ARPUEmulator(asmCode);
+      emulator.getState().stack.push(42);
+      emulator.step();
+      expect(emulator.getState()).toEqual({
+        ...defaultState,
+        registers: [42, 0, 0, 0],
+        stack: [],
+        PC: 1,
+        lineIndex: 1,
+        cycle: 1,
+      });
+    });
+
+    it('should pop 0 from empty stack', () => {
+      const asmLines = [
+        'SOP R1 1',
+      ];
+      const asmCode = asmLines.join('\n');
+      const defaultState = defaultARPUEmulatorState(asmCode);
+      const emulator = new ARPUEmulator(asmCode);
+      emulator.getState().registers[0] = 42;
+      emulator.step();
+      expect(emulator.getState()).toEqual({
+        ...defaultState,
+        registers: [0, 0, 0, 0],
+        stack: [],
+        PC: 1,
+        lineIndex: 1,
+        cycle: 1,
       });
     });
   });
