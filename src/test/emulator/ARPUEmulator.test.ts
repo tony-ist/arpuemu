@@ -375,4 +375,22 @@ describe('ARPUEmulator', () => {
       cycle: 1,
     });
   });
+
+  it('should move via MOV instruction', () => {
+    const asmLines = [
+      'MOV R1 R2',
+    ];
+    const asmCode = asmLines.join('\n');
+    const defaultState = defaultARPUEmulatorState(asmCode);
+    const emulator = new ARPUEmulator(asmCode);
+    emulator.getState().registers = [0, 42, 0, 0];
+    emulator.step();
+    expect(emulator.getState()).toEqual({
+      ...defaultState,
+      registers: [42, 42, 0, 0],
+      PC: 1,
+      lineIndex: 1,
+      cycle: 1,
+    });
+  });
 });

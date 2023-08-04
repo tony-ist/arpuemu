@@ -2,13 +2,13 @@
 
 IMM R1 0 0
 IMM R2 0 1
-IMM R3 0 3 // N
+IMM R3 0 6 // N
 
 .loop
 ADD R1 R2
-MOV R4 R1
+SOP R1 0
 MOV R1 R2
-MOV R2 R4
+SOP R2 1
 DEC R3 R3
 BRA 0 0b11 .loop
 

@@ -68,6 +68,7 @@ export class ARPUEmulator {
     STR: this.ramStore.bind(this),
     LOD: this.ramLoad.bind(this),
     ADD: this.add.bind(this),
+    MOV: this.move.bind(this),
   };
 
   constructor(asmCode: string) {
@@ -266,6 +267,15 @@ export class ARPUEmulator {
 
     this.state.registers[destinationRegisterIndex] = valueToWrite;
 
+    this.state.PC += 1;
+    this.state.lineIndex += 1;
+    this.state.cycle += 1;
+  }
+
+  private move(operands: Operand[]) {
+    const destinationRegisterIndex = operands[0].toInt();
+    const sourceRegisterIndex = operands[1].toInt();
+    this.state.registers[destinationRegisterIndex] = this.state.registers[sourceRegisterIndex];
     this.state.PC += 1;
     this.state.lineIndex += 1;
     this.state.cycle += 1;
