@@ -1,18 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { PMemViewer } from '../pmem-viewer/PMemViewer.tsx';
-import { RegViewer } from '../reg-viewer/RegViewer.tsx';
 import { EmulatorContext } from '../App.tsx';
-import { FlagsViewer } from '../flags-viewer/FlagsViewer.tsx';
-import { HexViewer } from '../hex/HexViewer.tsx';
-import { toHex } from '../../asm/asm-util.ts';
-import { StackViewer } from '../stack-viewer/StackViewer.tsx';
-import { RamViewer } from '../ram-viewer/RamViewer.tsx';
 import { Container } from '@mui/material';
 import styles from './MainPage.module.css';
 import { CodeEditor } from '../code-editor/CodeEditor.tsx';
+import { EmulatorStateViewer } from '../state-viewer/EmulatorStateViewer.tsx';
+import { PortInput } from '../port-input/PortInput.tsx';
 
 export function MainPage() {
   const { initEmulator, emulatorState, step: emulatorStep, portInput: emulatorPortInput } = useContext(EmulatorContext);
@@ -108,12 +102,6 @@ export function MainPage() {
     }
   }
 
-  function onPortInputKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
-    if (event.code === 'Enter') {
-      portInput();
-    }
-  }
-
   return (
     <>
       <Container>
@@ -180,56 +168,16 @@ export function MainPage() {
             }
             {
               emulatorState &&
-              <Box className={styles.emulatorStateContainer}>
+              <Box>
                 {
-                  emulatorState?.isWaitingPortInput &&
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <TextField
-                      autoFocus
-                      label="Port Input (dec, hex or bin)"
-                      value={portInputValue}
-                      onKeyDown={onPortInputKeyDown}
-                      onChange={(event) => setPortInputValue(event.target.value)}
-                    />
-                    <Button
-                      sx={{ marginLeft: '20px' }}
-                      variant='contained'
-                      onClick={portInput}
-                    >
-                      Ok
-                    </Button>
-                  </Box>
+                  emulatorState.isWaitingPortInput &&
+                  <PortInput
+                    triggerPortInput={portInput}
+                    portInputValue={portInputValue}
+                    setPortInputValue={setPortInputValue}
+                  />
                 }
-                <Box>Cycle (decimal) {emulatorState.cycle}</Box>
-                <Box>PC (hex) {toHex([emulatorState.PC])}</Box>
-                <PMemViewer
-                  machineCode={emulatorState.PMEM}
-                  highlightByte={emulatorState.PC}
-                  highlightSize={emulatorState.asmLines[emulatorState.lineIndex]?.getSizeInBytes()}
-                />
-                <RegViewer
-                  registers={emulatorState.registers}
-                />
-                <StackViewer
-                  machineCode={emulatorState.stack}
-                />
-                <FlagsViewer
-                  ZF={emulatorState.ZF}
-                  COUTF={emulatorState.COUTF}
-                  MSBF={emulatorState.MSBF}
-                  LSBF={emulatorState.LSBF}
-                />
-                <HexViewer
-                  title="Input Ports"
-                  binaryData={emulatorState.inputPorts}
-                />
-                <HexViewer
-                  title="Output Ports"
-                  binaryData={emulatorState.outputPorts}
-                />
-                <RamViewer
-                  machineCode={emulatorState.RAM}
-                />
+                <EmulatorStateViewer emulatorState={emulatorState} />
               </Box>
             }
           </Box>
