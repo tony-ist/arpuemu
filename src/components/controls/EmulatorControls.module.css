@@ -1,0 +1,9 @@
+.buttonsContainer {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+}
+
+.buttonsContainer > * {
+  margin-right: 5px;
+}

@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import { EmulatorContext } from '../App.tsx';
 import { Container } from '@mui/material';
 import styles from './MainPage.module.css';
 import { CodeEditor } from '../code-editor/CodeEditor.tsx';
 import { EmulatorStateViewer } from '../state-viewer/EmulatorStateViewer.tsx';
 import { PortInput } from '../port-input/PortInput.tsx';
+import { EmulatorControls } from '../controls/EmulatorControls.tsx';
 
 export function MainPage() {
   const { initEmulator, emulatorState, step: emulatorStep, portInput: emulatorPortInput } = useContext(EmulatorContext);
@@ -114,52 +114,15 @@ export function MainPage() {
               asmCode={asmCode}
               setAsmCode={setAsmCode}
             />
-            <Box className={styles.buttonsContainer}>
-              <Box>
-                <Button
-                  variant="contained"
-                  onClick={compile}
-                >
-                  Compile
-                </Button>
-              </Box>
-              <Box>
-                <Button
-                  variant='text'
-                  onClick={() => setIsEditing(true)}
-                  disabled={isEditing}
-                >
-                  Edit
-                </Button>
-              </Box>
-              <Box>
-                <Button
-                  variant="text"
-                  onClick={step}
-                  disabled={isEditing}
-                >
-                  Step
-                </Button>
-              </Box>
-              <Box>
-                <Button
-                  variant="text"
-                  onClick={run}
-                  disabled={isEditing || isRunning}
-                >
-                  Run
-                </Button>
-              </Box>
-              <Box>
-                <Button
-                  variant="text"
-                  onClick={stop}
-                  disabled={isEditing || !isRunning}
-                >
-                  Stop
-                </Button>
-              </Box>
-            </Box>
+            <EmulatorControls
+              compile={compile}
+              step={step}
+              run={run}
+              stop={stop}
+              isEditing={isEditing}
+              setIsEditing={setIsEditing}
+              isRunning={isRunning}
+            />
           </Box>
           <Box>
             {
