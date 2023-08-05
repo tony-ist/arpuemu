@@ -10,14 +10,17 @@ import { HexViewer } from '../hex/HexViewer.tsx';
 import { toHex } from '../../asm/asm-util.ts';
 import { StackViewer } from '../stack-viewer/StackViewer.tsx';
 import { RamViewer } from '../ram-viewer/RamViewer.tsx';
-import { Container } from '@mui/material';
+import { Container, SvgIcon } from '@mui/material';
 import styles from './MainPage.module.css';
+import { AsmLine } from '../../asm/AsmLine.ts';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 export function MainPage() {
   const { initEmulator, emulatorState, step: emulatorStep, portInput: emulatorPortInput } = useContext(EmulatorContext);
   const [asmCode, setAsmCode] = useState('');
   const [portInputValue, setPortInputValue] = useState('');
   const [isRunning, setIsRunning] = useState(false);
+  const [isEditing, setIsEditing] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const intervalRef = useRef<NodeJS.Timer | null>(null);
@@ -41,6 +44,7 @@ export function MainPage() {
     setPortInputValue('');
     try {
       initEmulator(asmCode);
+      setIsEditing(false);
     } catch (error) {
       console.error(error);
       setError((error as Error).message);
@@ -74,7 +78,7 @@ export function MainPage() {
       if (!emulatorState.isWaitingPortInput) {
         step();
       }
-    }, 100);
+    }, 1);
     setIsRunning(true);
   }
 
@@ -111,20 +115,64 @@ export function MainPage() {
     }
   }
 
+  function prettyPrintAsmLine(asmLine: AsmLine) {
+    const operandStrings = asmLine.getOperands().map((operand) => operand.toString()).join(' ');
+    const offset = asmLine.getOffsetInBytes();
+    if (offset === undefined) {
+      throw new Error(`Offset in bytes is undefined for line ${asmLine.toString()}`);
+    }
+    return `${toHex([offset])}: ${asmLine.getMnemonic()} ${operandStrings}`;
+  }
+
   return (
     <>
       <Container>
         <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
           <Box sx={{ width: 500 }}>
-            <TextField
-              label='ASM Code'
-              value={asmCode}
-              onChange={(textArea) => setAsmCode(textArea.target.value)}
-              multiline
-              fullWidth
-              maxRows={30}
-              inputProps={{ style: { fontFamily: 'RobotoMono, sans-serif' } }}
-            />
+            {
+              isEditing &&
+              <TextField
+                label='ASM Code'
+                value={asmCode}
+                onChange={(textArea) => setAsmCode(textArea.target.value)}
+                multiline
+                fullWidth
+                maxRows={30}
+                inputProps={{ style: { fontFamily: 'RobotoMono, sans-serif', resize: 'vertical' } }}
+              />
+            }
+            {
+              !isEditing &&
+              emulatorState &&
+              <Box sx={{ height: 700, overflowY: 'scroll', resize: 'vertical' }}>
+                <Box>
+                  {
+                    emulatorState.asmLines.map((asmLine, index) =>
+                      <Box
+                        key={index}
+                        sx={{ position: 'relative' }}
+                      >
+                        {
+                          asmLine.getLabel() &&
+                          <Box>{ asmLine.getLabel() }</Box>
+                        }
+                        <SvgIcon
+                          sx={{
+                            position: 'absolute',
+                            marginLeft: 5,
+                            visibility: emulatorState.lineIndex === index ? 'visible' : 'hidden'
+                          }}
+                          component={ArrowForwardIcon}
+                        />
+                        <Box key={index} sx={{ marginLeft: 10 }}>
+                          { prettyPrintAsmLine(asmLine) }
+                        </Box>
+                      </Box>
+                    )
+                  }
+                </Box>
+              </Box>
+            }
             <Box className={styles.buttonsContainer}>
               <Box>
                 <Button
@@ -136,9 +184,18 @@ export function MainPage() {
               </Box>
               <Box>
                 <Button
+                  variant='text'
+                  onClick={() => setIsEditing(true)}
+                  disabled={isEditing}
+                >
+                  Edit
+                </Button>
+              </Box>
+              <Box>
+                <Button
                   variant="text"
                   onClick={step}
-                  disabled={emulatorState === null}
+                  disabled={isEditing}
                 >
                   Step
                 </Button>
@@ -147,7 +204,7 @@ export function MainPage() {
                 <Button
                   variant="text"
                   onClick={run}
-                  disabled={emulatorState === null || isRunning}
+                  disabled={isEditing || isRunning}
                 >
                   Run
                 </Button>
@@ -156,7 +213,7 @@ export function MainPage() {
                 <Button
                   variant="text"
                   onClick={stop}
-                  disabled={emulatorState === null || !isRunning}
+                  disabled={isEditing || !isRunning}
                 >
                   Stop
                 </Button>
