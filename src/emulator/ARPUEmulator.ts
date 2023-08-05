@@ -123,7 +123,9 @@ export class ARPUEmulator {
   private rightShift(operands: Operand[]) {
     const destinationRegisterIndex = operands[0].toInt();
     const sourceRegisterIndex = operands[1].toInt();
-    this.state.registers[destinationRegisterIndex] = Math.floor(this.state.registers[sourceRegisterIndex] / 2);
+    const newValue = Math.floor(this.state.registers[sourceRegisterIndex] / 2);
+    this.state.registers[destinationRegisterIndex] = newValue;
+    this.updateFlags(newValue);
     this.state.PC += 1;
     this.state.lineIndex += 1;
     this.state.cycle += 1;
@@ -190,6 +192,7 @@ export class ARPUEmulator {
       this.state.registers[destinationRegisterIndex] = bitwiseNot(this.state.registers[sourceRegisterIndex]);
     }
 
+    this.updateFlags(this.state.registers[destinationRegisterIndex]);
     this.state.PC += 2;
     this.state.lineIndex += 1;
     this.state.cycle += 1;
@@ -314,6 +317,7 @@ export class ARPUEmulator {
     this.state.cycle += 1;
   }
 
+  // TODO: Flags
   private ramStore(operands: Operand[]) {
     const sourceRegisterIndex = operands[0].toInt();
     const pointerRegisterIndex = operands[1].toInt();
@@ -327,6 +331,7 @@ export class ARPUEmulator {
     this.state.cycle += 1;
   }
 
+  // TODO: Flags
   private ramLoad(operands: Operand[]) {
     const destinationRegisterIndex = operands[0].toInt();
     const pointerRegisterIndex = operands[1].toInt();
@@ -344,6 +349,7 @@ export class ARPUEmulator {
     const destinationRegisterIndex = operands[0].toInt();
     const sourceRegisterIndex = operands[1].toInt();
     this.state.registers[destinationRegisterIndex] = this.state.registers[sourceRegisterIndex];
+    this.updateFlags(this.state.registers[sourceRegisterIndex]);
     this.state.PC += 1;
     this.state.lineIndex += 1;
     this.state.cycle += 1;

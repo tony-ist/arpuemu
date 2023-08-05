@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ARPUEmulator, defaultARPUEmulatorState } from '../../emulator/ARPUEmulator.ts';
 import { RAM_SIZE_IN_BYTES } from '../../const/emulator-constants.ts';
+import { isBitSet } from '../../util/common-util.ts';
 
 describe('ARPUEmulator', () => {
   it('should load immediate via IMM instruction', () => {
@@ -430,6 +431,7 @@ describe('ARPUEmulator', () => {
     expect(emulator.getState()).toEqual({
       ...defaultState,
       registers: [21, 43, 0, 0],
+      LSBF: true,
       PC: 1,
       lineIndex: 1,
       cycle: 1,
@@ -454,9 +456,13 @@ describe('ARPUEmulator', () => {
       const emulator = new ARPUEmulator(asmCode);
       emulator.getState().registers = [0b1100, 0b1010, 0, 0];
       emulator.step();
+      const expectedMSBF = isBitSet(result, 7);
+      const expectedLSBF = isBitSet(result, 0);
       expect(emulator.getState()).toEqual({
         ...defaultState,
         registers: [result, 0b1010, 0, 0],
+        MSBF: expectedMSBF,
+        LSBF: expectedLSBF,
         PC: 2,
         lineIndex: 1,
         cycle: 1,
