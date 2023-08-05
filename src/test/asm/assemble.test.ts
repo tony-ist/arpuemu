@@ -41,6 +41,12 @@ describe('assemble', () => {
     assertProgram('other');
   });
 
+  it('should assemble insertion sort', () => {
+    const prefix = 'src/test/asm/programs';
+    const asmCode = readFileLines(path.join(prefix, `insertion-sort.s`));
+    const machineCode = assembleLines(asmCode);
+  });
+
   describe('parseAsmLines', () => {
     it('should parse labels', () => {
       const actual = parseAsmLines([

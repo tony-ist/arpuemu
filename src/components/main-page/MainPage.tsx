@@ -79,6 +79,7 @@ export function MainPage() {
               onChange={(textArea) => setAsmCode(textArea.target.value)}
               multiline
               fullWidth
+              maxRows={30}
               inputProps={{ style: { fontFamily: 'RobotoMono, sans-serif' } }}
             />
             <Box className={styles.buttonsContainer}>

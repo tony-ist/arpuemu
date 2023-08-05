@@ -5,12 +5,13 @@ This project is a browser-based assembler and emulator for ARPU Minecraft CPU.
 ISA and specs can be found here: https://docs.google.com/spreadsheets/d/1fgOYbUqzb0BNM6QNNpZwxJNMLgwfejtJXb5Xk7rqf3A/edit?usp=sharing
 
 ## TODO
-- Aliases
+- Aliases (PUSH R1, POP R1, IMM R1 42, AND/OR/XOR/NAND/NOT/XNOR/NOT, BRA ZERO .address, etc)
 - Linting
 - Error validation, display line number
 - Persistence via local storage / code history
 - Handle word overflow
 - Display arrow to the left of the code row being executed
+- Stack overflow error
 
 ### UI Components
 - Program memory hex view
