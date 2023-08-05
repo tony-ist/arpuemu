@@ -10,10 +10,9 @@ import { HexViewer } from '../hex/HexViewer.tsx';
 import { toHex } from '../../asm/asm-util.ts';
 import { StackViewer } from '../stack-viewer/StackViewer.tsx';
 import { RamViewer } from '../ram-viewer/RamViewer.tsx';
-import { Container, SvgIcon } from '@mui/material';
+import { Container } from '@mui/material';
 import styles from './MainPage.module.css';
-import { AsmLine } from '../../asm/AsmLine.ts';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { CodeEditor } from '../code-editor/CodeEditor.tsx';
 
 export function MainPage() {
   const { initEmulator, emulatorState, step: emulatorStep, portInput: emulatorPortInput } = useContext(EmulatorContext);
@@ -115,64 +114,18 @@ export function MainPage() {
     }
   }
 
-  function prettyPrintAsmLine(asmLine: AsmLine) {
-    const operandStrings = asmLine.getOperands().map((operand) => operand.toString()).join(' ');
-    const offset = asmLine.getOffsetInBytes();
-    if (offset === undefined) {
-      throw new Error(`Offset in bytes is undefined for line ${asmLine.toString()}`);
-    }
-    return `${toHex([offset])}: ${asmLine.getMnemonic()} ${operandStrings}`;
-  }
-
   return (
     <>
       <Container>
-        <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
-          <Box sx={{ width: 500 }}>
-            {
-              isEditing &&
-              <TextField
-                label='ASM Code'
-                value={asmCode}
-                onChange={(textArea) => setAsmCode(textArea.target.value)}
-                multiline
-                fullWidth
-                maxRows={30}
-                inputProps={{ style: { fontFamily: 'RobotoMono, sans-serif', resize: 'vertical' } }}
-              />
-            }
-            {
-              !isEditing &&
-              emulatorState &&
-              <Box sx={{ height: 700, overflowY: 'scroll', resize: 'vertical' }}>
-                <Box>
-                  {
-                    emulatorState.asmLines.map((asmLine, index) =>
-                      <Box
-                        key={index}
-                        sx={{ position: 'relative' }}
-                      >
-                        {
-                          asmLine.getLabel() &&
-                          <Box>{ asmLine.getLabel() }</Box>
-                        }
-                        <SvgIcon
-                          sx={{
-                            position: 'absolute',
-                            marginLeft: 5,
-                            visibility: emulatorState.lineIndex === index ? 'visible' : 'hidden'
-                          }}
-                          component={ArrowForwardIcon}
-                        />
-                        <Box key={index} sx={{ marginLeft: 10 }}>
-                          { prettyPrintAsmLine(asmLine) }
-                        </Box>
-                      </Box>
-                    )
-                  }
-                </Box>
-              </Box>
-            }
+        <Box className={styles.panelsContainer} sx={{ display: 'flex', justifyContent: 'space-around' }}>
+          <Box>
+            <CodeEditor
+              isEditing={isEditing}
+              asmLines={emulatorState?.asmLines}
+              currentLineIndex={emulatorState?.lineIndex}
+              asmCode={asmCode}
+              setAsmCode={setAsmCode}
+            />
             <Box className={styles.buttonsContainer}>
               <Box>
                 <Button
@@ -220,7 +173,7 @@ export function MainPage() {
               </Box>
             </Box>
           </Box>
-          <Box sx={{ width: 500 }}>
+          <Box>
             {
               error &&
               <Box className={styles.errorContainer}>{error}</Box>

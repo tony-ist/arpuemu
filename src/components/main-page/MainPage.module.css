@@ -16,3 +16,7 @@
 .buttonsContainer > * {
   margin-right: 5px;
 }
+
+.panelsContainer > * {
+  width: 500px;
+}
