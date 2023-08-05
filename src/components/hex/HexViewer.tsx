@@ -32,12 +32,6 @@ export function HexViewer(props: HexViewerPropTypes) {
     return '';
   }
 
-  console.log('groupedHexData.length:', groupedHexData.length)
-  console.log('groupedHexData:', groupedHexData)
-  console.log('labels.length:', labels.length)
-
-
-
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <Box>{title}</Box>
