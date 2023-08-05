@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -14,10 +14,13 @@ import { Container } from '@mui/material';
 import styles from './MainPage.module.css';
 
 export function MainPage() {
-  const { initEmulator, emulatorState, step: emulatorStep, portInput } = useContext(EmulatorContext);
+  const { initEmulator, emulatorState, step: emulatorStep, portInput: emulatorPortInput } = useContext(EmulatorContext);
   const [asmCode, setAsmCode] = useState('');
   const [portInputValue, setPortInputValue] = useState('');
+  const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const intervalRef = useRef<NodeJS.Timer | null>(null);
 
   useEffect(() => {
     const asmCode = localStorage.getItem('asmCode');
@@ -33,6 +36,7 @@ export function MainPage() {
   }, [asmCode]);
 
   function compile() {
+    stop();
     setError(null);
     setPortInputValue('');
     try {
@@ -45,26 +49,65 @@ export function MainPage() {
 
   function step() {
     if (emulatorState === null) {
-      throw new Error('Should initialize emulator before using it');
+      throw new Error('Should initialize emulator before using step on it');
     }
 
     setError(null);
 
     try {
-      if (emulatorState.isWaitingPortInput) {
+      emulatorStep();
+    } catch (error) {
+      handleError(error as Error);
+    }
+  }
+
+  function handleError(error: Error) {
+    console.error(error);
+    setError(error.message);
+  }
+
+  function run() {
+    intervalRef.current = setInterval(() => {
+      if (emulatorState === null) {
+        throw new Error('Should initialize emulator before using run on it');
+      }
+      if (!emulatorState.isWaitingPortInput) {
+        step();
+      }
+    }, 100);
+    setIsRunning(true);
+  }
+
+  function stop() {
+    if (intervalRef.current !== null) {
+      clearInterval(intervalRef.current);
+    }
+    setIsRunning(false);
+  }
+
+  function portInput() {
+    if (emulatorState === null) {
+      throw new Error('Should initialize emulator before using port input on it');
+    }
+
+    if (emulatorState.isWaitingPortInput) {
+      try {
         if (portInputValue === '') {
           throw new Error('You should write port input value first');
         }
-
-        portInput(portInputValue);
+        emulatorPortInput(portInputValue);
         setPortInputValue('');
-        return;
+      } catch (error) {
+        handleError(error as Error);
       }
+    } else {
+      throw new Error('Using port input while not waiting for port input');
+    }
+  }
 
-      emulatorStep();
-    } catch (error) {
-      console.error(error);
-      setError((error as Error).message);
+  function onPortInputKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (event.code === 'Enter') {
+      portInput();
     }
   }
 
@@ -100,6 +143,24 @@ export function MainPage() {
                   Step
                 </Button>
               </Box>
+              <Box>
+                <Button
+                  variant="text"
+                  onClick={run}
+                  disabled={emulatorState === null || isRunning}
+                >
+                  Run
+                </Button>
+              </Box>
+              <Box>
+                <Button
+                  variant="text"
+                  onClick={stop}
+                  disabled={emulatorState === null || !isRunning}
+                >
+                  Stop
+                </Button>
+              </Box>
             </Box>
           </Box>
           <Box sx={{ width: 500 }}>
@@ -112,12 +173,21 @@ export function MainPage() {
               <Box className={styles.emulatorStateContainer}>
                 {
                   emulatorState?.isWaitingPortInput &&
-                  <Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <TextField
+                      autoFocus
                       label="Port Input (dec, hex or bin)"
                       value={portInputValue}
-                      onChange={(textArea) => setPortInputValue(textArea.target.value)}
+                      onKeyDown={onPortInputKeyDown}
+                      onChange={(event) => setPortInputValue(event.target.value)}
                     />
+                    <Button
+                      sx={{ marginLeft: '20px' }}
+                      variant='contained'
+                      onClick={portInput}
+                    >
+                      Ok
+                    </Button>
                   </Box>
                 }
                 <Box>Cycle (decimal) {emulatorState.cycle}</Box>

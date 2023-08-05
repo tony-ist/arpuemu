@@ -38,7 +38,7 @@ export function HexViewer(props: HexViewerPropTypes) {
       <Box>
         {
           groupedHexData.map((group, groupIndex) =>
-            <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+            <Box key={groupIndex} sx={{ display: 'flex', flexDirection: 'row' }}>
               <Box>{ labels[groupIndex] }</Box>
               <Box sx={{ marginRight: 1 }}>|</Box>
               <Box>
