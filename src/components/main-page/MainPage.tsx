@@ -8,6 +8,8 @@ import { EmulatorStateViewer } from '../state-viewer/EmulatorStateViewer.tsx';
 import { PortInput } from '../port-input/PortInput.tsx';
 import { EmulatorControls } from '../controls/EmulatorControls.tsx';
 
+const RUN_INTERVAL_MS = 1;
+
 export function MainPage() {
   const { initEmulator, emulatorState, step: emulatorStep, portInput: emulatorPortInput } = useContext(EmulatorContext);
   const [asmCode, setAsmCode] = useState('');
@@ -31,6 +33,14 @@ export function MainPage() {
     }
   }, [asmCode]);
 
+  function handleError(error: Error) {
+    if (isRunning) {
+      stop();
+    }
+    console.error(error);
+    setError(error.message);
+  }
+
   function compile() {
     stop();
     setError(null);
@@ -39,8 +49,7 @@ export function MainPage() {
       initEmulator(asmCode);
       setIsEditing(false);
     } catch (error) {
-      console.error(error);
-      setError((error as Error).message);
+      handleError(error as Error);
     }
   }
 
@@ -58,11 +67,6 @@ export function MainPage() {
     }
   }
 
-  function handleError(error: Error) {
-    console.error(error);
-    setError(error.message);
-  }
-
   function run() {
     intervalRef.current = setInterval(() => {
       if (emulatorState === null) {
@@ -71,7 +75,7 @@ export function MainPage() {
       if (!emulatorState.isWaitingPortInput) {
         step();
       }
-    }, 1);
+    }, RUN_INTERVAL_MS);
     setIsRunning(true);
   }
 

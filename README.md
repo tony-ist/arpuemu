@@ -12,6 +12,9 @@ ISA and specs can be found here: https://docs.google.com/spreadsheets/d/1fgOYbUq
 - Handle word overflow
 - Display arrow to the left of the code row being executed
 - Stack overflow error
+- Stop on BRA 0 0 .end
+- Reg and flag names in views
+- Use context in EmulatorControls, get rid of some function and state in MainPage 
 
 ### UI Components
 - Program memory hex view
