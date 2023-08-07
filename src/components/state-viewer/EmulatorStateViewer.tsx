@@ -5,10 +5,10 @@ import { PMemViewer } from '../pmem-viewer/PMemViewer.tsx';
 import { RegViewer } from '../reg-viewer/RegViewer.tsx';
 import { StackViewer } from '../stack-viewer/StackViewer.tsx';
 import { FlagsViewer } from '../flags-viewer/FlagsViewer.tsx';
-import { HexViewer } from '../hex/HexViewer.tsx';
 import { RamViewer } from '../ram-viewer/RamViewer.tsx';
 import React from 'react';
 import { ARPUEmulatorState } from '../../emulator/ARPUEmulator.ts';
+import { SimpleHexViewer } from '../simple-hex-viewer/SimpleHexViewer.tsx';
 
 interface EmulatorStatePropsType {
   emulatorState: ARPUEmulatorState;
@@ -16,6 +16,15 @@ interface EmulatorStatePropsType {
 
 export function EmulatorStateViewer(props: EmulatorStatePropsType) {
   const { emulatorState } = props;
+  const portLabels = ['P0', 'P1', 'P2', 'P3'];
+  const inputPortColumns = portLabels.map((label, index) => ({
+    label,
+    value: emulatorState.inputPorts[index],
+  }));
+  const outputPortColumns = portLabels.map((label, index) => ({
+    label,
+    value: emulatorState.outputPorts[index],
+  }));
 
   return (
     <Box className={styles.emulatorStateContainer}>
@@ -30,7 +39,7 @@ export function EmulatorStateViewer(props: EmulatorStatePropsType) {
         registers={emulatorState.registers}
       />
       <StackViewer
-        machineCode={emulatorState.stack}
+        binaryData={emulatorState.stack}
       />
       <FlagsViewer
         ZF={emulatorState.ZF}
@@ -38,16 +47,16 @@ export function EmulatorStateViewer(props: EmulatorStatePropsType) {
         MSBF={emulatorState.MSBF}
         LSBF={emulatorState.LSBF}
       />
-      <HexViewer
+      <SimpleHexViewer
         title="Input Ports"
-        binaryData={emulatorState.inputPorts}
+        columns={inputPortColumns}
       />
-      <HexViewer
+      <SimpleHexViewer
         title="Output Ports"
-        binaryData={emulatorState.outputPorts}
+        columns={outputPortColumns}
       />
       <RamViewer
-        machineCode={emulatorState.RAM}
+        binaryData={emulatorState.RAM}
       />
     </Box>
   );

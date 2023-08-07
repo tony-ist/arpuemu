@@ -18,6 +18,15 @@ export function HexViewer(props: HexViewerPropTypes) {
   const groupedHexData = groupElements(hexData, VALUES_IN_A_ROW);
   const labels = generateLabels(hexData.length);
 
+  if (binaryData.length === 0) {
+    return (
+      <Box>
+        <Box>{title}</Box>
+        <Box>Empty</Box>
+      </Box>
+    )
+  }
+
   function highlightClassName(groupIndex: number, elementIndex: number) {
     if (highlightByte === undefined) {
       return '';

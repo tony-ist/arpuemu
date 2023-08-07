@@ -1,4 +1,4 @@
-import { HexViewer } from '../hex/HexViewer.tsx';
+import { SimpleHexViewer } from '../simple-hex-viewer/SimpleHexViewer.tsx';
 
 interface FlagsViewerPropTypes {
   ZF: boolean;
@@ -9,11 +9,17 @@ interface FlagsViewerPropTypes {
 
 export function FlagsViewer(props: FlagsViewerPropTypes) {
   const { ZF, COUTF, MSBF, LSBF } = props;
+  const labels = ['ZF', 'CF', 'MF', 'LF'];
+  const values = [ZF, COUTF, MSBF, LSBF];
+  const columns = labels.map((label, index) => ({
+    label,
+    value: values[index] ? 1 : 0,
+  }));
 
   return (
-    <HexViewer
+    <SimpleHexViewer
       title={'Flags'}
-      binaryData={[ZF, COUTF, MSBF, LSBF].map((flag) => flag ? 1 : 0)}
+      columns={columns}
     />
   );
 }

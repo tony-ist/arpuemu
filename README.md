@@ -10,11 +10,14 @@ ISA and specs can be found here: https://docs.google.com/spreadsheets/d/1fgOYbUq
 - Error validation, display line number
 - Persistence via local storage / code history
 - Handle word overflow
-- Display arrow to the left of the code row being executed
 - Stack overflow error
 - Stop on BRA 0 0 .end
 - Reg and flag names in views
-- Use context in EmulatorControls, get rid of some function and state in MainPage 
+- Use context in EmulatorControls, get rid of some function and state in MainPage
+- Display inline comments in assembly code
+- Edit RAM
+- Adaptive layout (grid?)
+- Rename machineCode to binaryData where appropriate
 
 ### UI Components
 - Program memory hex view

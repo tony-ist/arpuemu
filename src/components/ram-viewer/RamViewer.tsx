@@ -1,16 +1,16 @@
 import { HexViewer } from '../hex/HexViewer.tsx';
 
 interface RamViewerPropTypes {
-  machineCode: number[]
+  binaryData: number[]
 }
 
 export function RamViewer(props: RamViewerPropTypes) {
-  const { machineCode } = props;
+  const { binaryData } = props;
 
   return (
     <HexViewer
       title={'RAM'}
-      binaryData={machineCode}
+      binaryData={binaryData}
     />
   );
 }
