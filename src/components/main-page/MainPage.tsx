@@ -72,6 +72,13 @@ export function MainPage() {
       if (emulatorState === null) {
         throw new Error('Should initialize emulator before using run on it');
       }
+
+      const isHalt = emulatorState.asmLines[emulatorState.lineIndex].isHalt();
+
+      if (isHalt) {
+        stop();
+      }
+
       if (!emulatorState.isWaitingPortInput) {
         step();
       }

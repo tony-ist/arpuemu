@@ -87,4 +87,8 @@ export class AsmLine {
       throw new Error(`Trying to access data value of non-data AsmLine "${this.toString()}"`);
     }
   }
+
+  isHalt() {
+    return this.mnemonic === 'BRA' && this.operands[2].getLabel() === this.label;
+  }
 }

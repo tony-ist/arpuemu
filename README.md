@@ -14,8 +14,6 @@ ISA and specs can be found here: https://docs.google.com/spreadsheets/d/1fgOYbUq
 - Use context in EmulatorControls, get rid of some function and state in MainPage
 - Display inline comments in assembly code
 - Adaptive layout (grid?)
-- Edit RAM
-- Stop on BRA 0 0 .end
 
 ### UI Components
 - Program memory hex view
