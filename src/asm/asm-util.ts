@@ -24,6 +24,10 @@ export function toHex(bytes: number[]) {
   return bytes.map((byte) => padByte(byte.toString(16).toUpperCase()));
 }
 
+export function fromHex(hex: string[]) {
+  return hex.map((x) => parseInt(x, 16));
+}
+
 export function isDecimalNumber(token: string) {
   return /^[0-9]+$/.test(token);
 }

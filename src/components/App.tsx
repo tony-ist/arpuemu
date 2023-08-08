@@ -14,6 +14,7 @@ export interface EmulatorContextType {
   initEmulator: (asmCode: string) => void;
   step: () => void;
   portInput: (value: string) => void;
+  setRAM: (binaryData: number[]) => void;
 }
 
 const emulatorFunctionStub = () => {
@@ -25,6 +26,7 @@ export const EmulatorContext = createContext<EmulatorContextType>({
   initEmulator: emulatorFunctionStub,
   step: emulatorFunctionStub,
   portInput: emulatorFunctionStub,
+  setRAM: emulatorFunctionStub,
 });
 
 export function App() {
@@ -86,12 +88,34 @@ export function App() {
     });
   }
 
+  function setRAM(binaryData: number[]) {
+    const error  = new Error('Invalid state: setRAM function is called on uninitialized emulator');
+
+    if (emulatorAndState === null) {
+      throw error;
+    }
+
+    emulatorAndState.emulator.setRAM(binaryData);
+
+    setEmulatorAndState((prevState) => {
+      if (prevState === null) {
+        throw error;
+      }
+
+      return {
+        emulator: prevState.emulator,
+        emulatorState: prevState.emulator.getState(),
+      };
+    });
+  }
+
   return (
     <EmulatorContext.Provider value={{
       emulatorState: emulatorAndState === null ? null: emulatorAndState.emulatorState,
       initEmulator,
       step,
       portInput,
+      setRAM,
     }}>
       <MainPage />
     </EmulatorContext.Provider>
