@@ -11,13 +11,11 @@ ISA and specs can be found here: https://docs.google.com/spreadsheets/d/1fgOYbUq
 - Persistence via local storage / code history
 - Handle word overflow
 - Stack overflow error
-- Stop on BRA 0 0 .end
-- Reg and flag names in views
 - Use context in EmulatorControls, get rid of some function and state in MainPage
 - Display inline comments in assembly code
-- Edit RAM
 - Adaptive layout (grid?)
-- Rename machineCode to binaryData where appropriate
+- Edit RAM
+- Stop on BRA 0 0 .end
 
 ### UI Components
 - Program memory hex view

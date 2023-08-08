@@ -487,4 +487,33 @@ describe('ARPUEmulator', () => {
       cycle: 1,
     });
   });
+
+  function initRAM(binaryData: number[]) {
+    const result = new Array(RAM_SIZE_IN_BYTES).fill(0);
+    result.splice(0, binaryData.length, ...binaryData);
+    return result;
+  }
+
+  describe('set RAM', () => {
+    it('should set RAM', () => {
+      const asmCode = 'MOV R1 R1';
+      const emulator = new ARPUEmulator(asmCode);
+      const defaultState = defaultARPUEmulatorState(asmCode);
+      emulator.getState().RAM = initRAM([42, 42, 42, 42]);
+      emulator.setRAM([1, 2, 3]);
+      expect(emulator.getState()).toEqual({
+        ...defaultState,
+        RAM: initRAM([1, 2, 3]),
+      });
+    });
+  });
+
+  it('should throw when argument is too long', () => {
+    const asmCode = 'MOV R1 R1';
+    const emulator = new ARPUEmulator(asmCode);
+    const binaryData = new Array(RAM_SIZE_IN_BYTES + 1).fill(0);
+    expect(() => emulator.setRAM(binaryData))
+      .toThrowError(`Binary data argument is "${binaryData.length}" bytes long while max RAM size is ${RAM_SIZE_IN_BYTES}`);
+  });
+
 });

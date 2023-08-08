@@ -376,4 +376,14 @@ export class ARPUEmulator {
   public getState() {
     return this.state;
   }
+
+  public setRAM(binaryData: number[]) {
+    if (binaryData.length > RAM_SIZE_IN_BYTES) {
+      throw new Error(`Binary data argument is "${binaryData.length}" bytes long while max RAM size is ${RAM_SIZE_IN_BYTES}`);
+    }
+    binaryData.forEach((byte, index) => this.state.RAM[index] = byte);
+    if (binaryData.length < RAM_SIZE_IN_BYTES) {
+      this.state.RAM.fill(0, binaryData.length);
+    }
+  }
 }
