@@ -42,15 +42,13 @@ export function CodeEditor(props: CodeEditorPropsType) {
           onChange={(textArea) => setAsmCode(textArea.target.value)}
           multiline
           fullWidth
+          // This forces it to read styles from css
+          inputProps={{ style: { overflow: '', height: '' } }}
         />
       }
       {
         !isEditing &&
-        <Box sx={{
-          height: 'calc(100vh - 70px)',
-          overflowY: 'scroll',
-          resize: 'vertical'
-        }}>
+        <Box className={styles.compiledCodeContainer}>
           <Box>
             {
               asmLines &&

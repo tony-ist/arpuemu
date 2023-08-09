@@ -2,9 +2,11 @@
   font-family: RobotoMono, sans-serif;
   resize: vertical;
   height: calc(100vh - 100px);
+  overflow: auto;
 }
 
-/*@media (min-width: 1070px) {*/
-/*  .textAreaContainer textarea {*/
-/*  }*/
-/*}*/
+.compiledCodeContainer {
+  height: calc(100vh - 70px);
+  overflow-y: scroll;
+  resize: vertical;
+}

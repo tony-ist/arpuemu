@@ -7,6 +7,11 @@
   margin-bottom: 10px;
 }
 
+.panelsContainer {
+  display: flex;
+  justify-content: space-evenly;
+}
+
 .panelsContainer > * {
   width: 500px;
 }
