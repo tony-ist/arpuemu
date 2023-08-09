@@ -104,6 +104,7 @@ export function MainPage() {
         if (portInputValue === '') {
           throw new Error('You should write port input value first');
         }
+        setError(null);
         emulatorPortInput(portInputValue);
         setPortInputValue('');
       } catch (error) {
