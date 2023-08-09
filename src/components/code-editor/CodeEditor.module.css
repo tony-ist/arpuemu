@@ -1,0 +1,10 @@
+.textAreaContainer textarea {
+  font-family: RobotoMono, sans-serif;
+  resize: vertical;
+  height: calc(100vh - 100px);
+}
+
+/*@media (min-width: 1070px) {*/
+/*  .textAreaContainer textarea {*/
+/*  }*/
+/*}*/

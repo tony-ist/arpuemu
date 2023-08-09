@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box';
-import styles from '../main-page/MainPage.module.css';
+import styles from './EmulatorStateViewer.module.css';
 import { toHex } from '../../asm/asm-util.ts';
 import { PMemViewer } from '../pmem-viewer/PMemViewer.tsx';
 import { RegViewer } from '../reg-viewer/RegViewer.tsx';

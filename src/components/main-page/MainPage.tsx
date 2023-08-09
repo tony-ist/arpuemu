@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import { EmulatorContext } from '../App.tsx';
-import { Container } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import styles from './MainPage.module.css';
 import { CodeEditor } from '../code-editor/CodeEditor.tsx';
 import { EmulatorStateViewer } from '../state-viewer/EmulatorStateViewer.tsx';
 import { PortInput } from '../port-input/PortInput.tsx';
 import { EmulatorControls } from '../controls/EmulatorControls.tsx';
+import Container from '@mui/material/Container';
 
 const RUN_INTERVAL_MS = 1;
 
@@ -116,8 +117,8 @@ export function MainPage() {
   return (
     <>
       <Container>
-        <Box className={styles.panelsContainer} sx={{ display: 'flex', justifyContent: 'space-around' }}>
-          <Box>
+        <Grid container className={styles.panelsContainer}>
+          <Grid item>
             <CodeEditor
               isEditing={isEditing}
               asmLines={emulatorState?.asmLines}
@@ -134,8 +135,8 @@ export function MainPage() {
               setIsEditing={setIsEditing}
               isRunning={isRunning}
             />
-          </Box>
-          <Box>
+          </Grid>
+          <Grid item>
             {
               error &&
               <Box className={styles.errorContainer}>{error}</Box>
@@ -154,8 +155,8 @@ export function MainPage() {
                 <EmulatorStateViewer emulatorState={emulatorState} />
               </Box>
             }
-          </Box>
-        </Box>
+          </Grid>
+        </Grid>
       </Container>
     </>
   );

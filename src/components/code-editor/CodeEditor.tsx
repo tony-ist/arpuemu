@@ -5,6 +5,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import React from 'react';
 import { AsmLine } from '../../asm/AsmLine.ts';
 import { toHex } from '../../asm/asm-util.ts';
+import styles from './CodeEditor.module.css';
 
 interface CodeEditorPropsType {
   isEditing: boolean;
@@ -27,7 +28,7 @@ export function CodeEditor(props: CodeEditorPropsType) {
   const { isEditing, asmLines, currentLineIndex, asmCode, setAsmCode } = props;
 
   if (!isEditing && !asmLines) {
-    throw new Error(`Invalid CodeEditor state: isEditing: "${isEditing}" and asmLines: "${asmLines}"`)
+    throw new Error(`Invalid CodeEditor state: isEditing: "${isEditing}" and asmLines: "${asmLines}"`);
   }
 
   return (
@@ -35,18 +36,21 @@ export function CodeEditor(props: CodeEditorPropsType) {
       {
         isEditing &&
         <TextField
+          className={styles.textAreaContainer}
           label='ASM Code'
           value={asmCode}
           onChange={(textArea) => setAsmCode(textArea.target.value)}
           multiline
           fullWidth
-          maxRows={30}
-          inputProps={{ style: { fontFamily: 'RobotoMono, sans-serif', resize: 'vertical' } }}
         />
       }
       {
         !isEditing &&
-        <Box sx={{ height: 700, overflowY: 'scroll', resize: 'vertical' }}>
+        <Box sx={{
+          height: 'calc(100vh - 70px)',
+          overflowY: 'scroll',
+          resize: 'vertical'
+        }}>
           <Box>
             {
               asmLines &&
