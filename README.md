@@ -13,7 +13,6 @@ ISA and specs can be found here: https://docs.google.com/spreadsheets/d/1fgOYbUq
 - Stack overflow error
 - Use context in EmulatorControls, get rid of some function and state in MainPage
 - Display inline comments in assembly code
-- Adaptive layout (grid?)
 
 ### UI Components
 - Program memory hex view

@@ -23,10 +23,10 @@ export class AsmLine {
     if (operandInts.some((integer) => integer === undefined)) {
       throw new Error(`Some operands that are labels were not filled with immediate values for line "${this.toString()}"`);
     }
-    const operandInt1 = operandInts[0] as number;
+    const operandInt1 = operandInts[0];
     const operandInt2 = operandInts[1] ?? 0;
     const operandInt3 = operandInts[2];
-    const byte1 = (this.opcode << 4) + (operandInt1 << 2) + operandInt2;
+    const byte1 = (operandInt2 << 6) + (operandInt1 << 4) + this.opcode;
     return operandInt3 === undefined ? [byte1] : [byte1, operandInt3];
   }
 
