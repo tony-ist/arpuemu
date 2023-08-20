@@ -5,6 +5,7 @@ import { groupElements } from '../../util/common-util.ts';
 import { generateLabels, VALUES_IN_A_ROW } from '../../util/hex-viewer-util.ts';
 import Modal from '@mui/material/Modal';
 import IconButton from '@mui/material/IconButton';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import EditIcon from '@mui/icons-material/Edit';
 import { useState } from 'react';
 import TextField from '@mui/material/TextField';
@@ -18,6 +19,7 @@ interface HexViewerPropTypes {
   setData?: (binaryData: number[]) => void;
   highlightByte?: number;
   highlightSize?: number;
+  displayCopyButton?: boolean;
 }
 
 export function HexViewer(props: HexViewerPropTypes) {
@@ -27,6 +29,7 @@ export function HexViewer(props: HexViewerPropTypes) {
     highlightByte,
     highlightSize = 1,
     displayEditButton = false,
+    displayCopyButton = false,
     setData = () => {
       throw new Error('setData should not be called when it is not passed as a prop');
     },
@@ -84,24 +87,36 @@ export function HexViewer(props: HexViewerPropTypes) {
     setIsEditModalOpen(true);
   }
 
+  function copyToClipboard() {
+    navigator.clipboard.writeText(hexData.join(' '));
+  }
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <Box>{title}</Box>
         {
+          displayCopyButton &&
+            <Box>
+                <IconButton onClick={copyToClipboard}>
+                    <ContentCopyIcon fontSize="small"/>
+                </IconButton>
+            </Box>
+        }
+        {
           displayEditButton &&
-          <Box>
-            <IconButton onClick={openEditModal}>
-              <EditIcon fontSize='small' />
-            </IconButton>
-          </Box>
+            <Box>
+                <IconButton onClick={openEditModal}>
+                    <EditIcon fontSize="small"/>
+                </IconButton>
+            </Box>
         }
       </Box>
       <Box>
         {
           groupedHexData.map((group, groupIndex) =>
             <Box key={groupIndex} sx={{ display: 'flex', flexDirection: 'row' }}>
-              <Box>{ labels[groupIndex] }</Box>
+              <Box>{labels[groupIndex]}</Box>
               <Box sx={{ marginRight: 1 }}>|</Box>
               <Box>
                 {
@@ -131,11 +146,11 @@ export function HexViewer(props: HexViewerPropTypes) {
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3px' }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1.5px', marginTop: '-1px' }}>
               {
-                labels.map((label, index) => <Box key={index}>{ label }</Box>)
+                labels.map((label, index) => <Box key={index}>{label}</Box>)
               }
             </Box>
             <TextField
-              label='Input Data'
+              label="Input Data"
               value={editModalData}
               rows={16}
               multiline
@@ -146,16 +161,16 @@ export function HexViewer(props: HexViewerPropTypes) {
           </Box>
           {
             modalError &&
-            <Box
-              className={styles.errorContainer}
-              sx={{ marginTop: 1, textAlign: 'center' }}
-            >
-              { modalError }
-            </Box>
+              <Box
+                  className={styles.errorContainer}
+                  sx={{ marginTop: 1, textAlign: 'center' }}
+              >
+                {modalError}
+              </Box>
           }
           <Button
             onClick={setEditedData}
-            variant='contained'
+            variant="contained"
             sx={{ marginTop: 2 }}
           >
             Submit

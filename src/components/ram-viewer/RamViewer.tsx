@@ -16,6 +16,7 @@ export function RamViewer(props: RamViewerPropTypes) {
       binaryData={binaryData}
       setData={setRAM}
       displayEditButton
+      displayCopyButton
     />
   );
 }

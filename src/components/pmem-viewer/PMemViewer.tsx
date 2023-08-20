@@ -15,6 +15,7 @@ export function PMemViewer(props: PMemViewerPropTypes) {
       binaryData={machineCode}
       highlightByte={highlightByte}
       highlightSize={highlightSize}
+      displayCopyButton
     />
   );
 }
