@@ -128,14 +128,13 @@ describe('ARPUEmulator', () => {
           cycle: 1,
         });
       });
-
     });
 
     describe('conditional', () => {
       describe('without negate', () => {
         it('should make a jump when condition ZF is true', () => {
           const asmLines = [
-            'BRA 0 0b01 .branch',
+            'BRA 0 0b10 .branch',
             'IMM R1 0 1',
             '.branch',
             'IMM R1 0 2',
@@ -147,7 +146,7 @@ describe('ARPUEmulator', () => {
           emulator.step();
           expect(emulator.getState()).toEqual({
             ...defaultState,
-            // TODO: ZF should be false after jump if PC != 0
+            // TODO: ZF should be false after jump if PC != 0, or should it? (we do not pass address through ALU)
             ZF: true,
             PC: 4,
             lineIndex: 2,
@@ -155,9 +154,30 @@ describe('ARPUEmulator', () => {
           });
         });
 
+        it('should not make a jump when condition ZF is false', () => {
+          const asmLines = [
+            'BRA 0 0b10 .branch',
+            'IMM R1 0 1',
+            '.branch',
+            'IMM R1 0 2',
+          ];
+          const asmCode = asmLines.join('\n');
+          const defaultState = defaultARPUEmulatorState(asmCode);
+          const emulator = new ARPUEmulator(asmCode);
+          emulator.getState().ZF = false;
+          emulator.step();
+          expect(emulator.getState()).toEqual({
+            ...defaultState,
+            ZF: false,
+            PC: 2,
+            lineIndex: 1,
+            cycle: 1,
+          });
+        });
+
         it('should make a jump when condition COUT is true', () => {
           const asmLines = [
-            'BRA 1 0b01 .branch',
+            'BRA 1 0b10 .branch',
             'IMM R1 0 1',
             '.branch',
             'IMM R1 0 2',
@@ -172,6 +192,27 @@ describe('ARPUEmulator', () => {
             COUTF: true,
             PC: 4,
             lineIndex: 2,
+            cycle: 1,
+          });
+        });
+
+        it('should not make a jump when condition COUT is false', () => {
+          const asmLines = [
+            'BRA 1 0b10 .branch',
+            'IMM R1 0 1',
+            '.branch',
+            'IMM R1 0 2',
+          ];
+          const asmCode = asmLines.join('\n');
+          const defaultState = defaultARPUEmulatorState(asmCode);
+          const emulator = new ARPUEmulator(asmCode);
+          emulator.getState().COUTF = false;
+          emulator.step();
+          expect(emulator.getState()).toEqual({
+            ...defaultState,
+            COUTF: false,
+            PC: 2,
+            lineIndex: 1,
             cycle: 1,
           });
         });

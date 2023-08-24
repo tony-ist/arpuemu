@@ -260,8 +260,8 @@ export class ARPUEmulator {
   private shouldJump(operands: Operand[]) {
     const condition = operands[0].toInt();
     const flags = operands[1].toInt();
-    const isConditional = isBitSet(flags, 0);
-    const isNegate = isBitSet(flags, 1);
+    const isConditional = isBitSet(flags, 1);
+    const isNegate = isBitSet(flags, 0);
 
     if (!isConditional) {
       return true;
