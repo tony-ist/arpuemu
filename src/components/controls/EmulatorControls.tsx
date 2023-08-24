@@ -22,7 +22,7 @@ export function EmulatorControls(props: EmulatorControlsPropsType) {
           variant="contained"
           onClick={compile}
         >
-          Compile
+          {isEditing ? 'Compile' : 'Reset'}
         </Button>
       </Box>
       <Box>
