@@ -481,13 +481,13 @@ describe('ARPUEmulator', () => {
 
   describe('bitwise operations via BIT instruction', () => {
     it.each([
-      ['AND', '0b1000_0000', 0b1000],
-      ['OR', '0b0100_0000', 0b1110],
-      ['XOR', '0b0010_0000', 0b0110],
-      ['NAND', '0b1001_0000', 0b1111_0111],
-      ['NOR', '0b0101_0000', 0b1111_0001],
-      ['XNOR', '0b0011_0000', 0b1111_1001],
-      ['NOT', '0b0000_1000', 0b1111_0101],
+      ['AND', '0b0100_0000', 0b1000],
+      ['OR', '0b0010_0000', 0b1110],
+      ['XOR', '0b0001_0000', 0b0110],
+      ['NAND', '0b1100_0000', 0b1111_0111],
+      ['NOR', '0b1010_0000', 0b1111_0001],
+      ['XNOR', '0b1001_0000', 0b1111_1001],
+      ['NOT', '0b0000_0001', 0b1111_0101],
     ])('should do %s', (mnemonic: string, operand: string, result: number) => {
       const asmLines = [
         `BIT R1 R2 ${operand}`,

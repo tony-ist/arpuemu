@@ -167,11 +167,11 @@ export class ARPUEmulator {
     const destinationRegisterIndex = operands[0].toInt();
     const sourceRegisterIndex = operands[1].toInt();
     const flags = operands[2].toInt();
-    const isAnd = isBitSet(flags, 7);
-    const isOr = isBitSet(flags, 6);
-    const isXor = isBitSet(flags, 5);
-    const isInvert = isBitSet(flags, 4);
-    const isNot = isBitSet(flags, 3);
+    const isAnd = isBitSet(flags, 6);
+    const isOr = isBitSet(flags, 5);
+    const isXor = isBitSet(flags, 4);
+    const isInvert = isBitSet(flags, 7);
+    const isNot = isBitSet(flags, 0);
 
     if (isAnd) {
       this.state.registers[destinationRegisterIndex] =
