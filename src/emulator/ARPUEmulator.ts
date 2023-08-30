@@ -317,10 +317,9 @@ export class ARPUEmulator {
     this.state.cycle += 1;
   }
 
-  // TODO: Flags
   private ramStore(operands: Operand[]) {
-    const sourceRegisterIndex = operands[0].toInt();
-    const pointerRegisterIndex = operands[1].toInt();
+    const pointerRegisterIndex = operands[0].toInt();
+    const sourceRegisterIndex = operands[1].toInt();
     const valueToWrite = this.state.registers[sourceRegisterIndex];
     const destinationRAMAddress = this.state.registers[pointerRegisterIndex];
 
@@ -331,10 +330,9 @@ export class ARPUEmulator {
     this.state.cycle += 1;
   }
 
-  // TODO: Flags
   private ramLoad(operands: Operand[]) {
-    const destinationRegisterIndex = operands[0].toInt();
-    const pointerRegisterIndex = operands[1].toInt();
+    const pointerRegisterIndex = operands[0].toInt();
+    const destinationRegisterIndex = operands[1].toInt();
     const sourceRAMAddress = this.state.registers[pointerRegisterIndex];
     const valueToWrite = this.state.RAM[sourceRAMAddress];
 
