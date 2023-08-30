@@ -360,7 +360,7 @@ describe('ARPUEmulator', () => {
 
   it('should store in RAM via STR instruction', () => {
     const asmLines = [
-      'STR R2 R1',
+      'STR R1 R2',
     ];
     const asmCode = asmLines.join('\n');
     const defaultState = defaultARPUEmulatorState(asmCode);
@@ -381,7 +381,7 @@ describe('ARPUEmulator', () => {
 
   it('should load from RAM via LOD instruction', () => {
     const asmLines = [
-      'LOD R2 R1',
+      'LOD R1 R2',
     ];
     const asmCode = asmLines.join('\n');
     const defaultState = defaultARPUEmulatorState(asmCode);
