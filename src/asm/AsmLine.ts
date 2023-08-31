@@ -89,9 +89,8 @@ export class AsmLine {
   }
 
   isHalt() {
-    return (
-      this.mnemonic === 'BRA' && this.operands[2].getLabel() === this.label ||
-      this.mnemonic === 'RET' && this.operands[0].toInt() === 1
-    );
+    const isSelfBranch = this.mnemonic === 'BRA' && this.operands[2].getLabel() === this.label;
+    const isReturnOne = this.mnemonic === 'RET' && this.operands[0]?.toInt() === 1;
+    return isSelfBranch || isReturnOne;
   }
 }

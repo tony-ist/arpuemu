@@ -74,15 +74,20 @@ export function MainPage() {
         throw new Error('Should initialize emulator before using run on it');
       }
 
-      const isHalt = emulatorState.asmLines[emulatorState.lineIndex].isHalt();
+      try {
+        const isHalt = emulatorState.asmLines[emulatorState.lineIndex].isHalt();
 
-      if (isHalt) {
+        if (isHalt) {
+          stop();
+          return;
+        }
+
+        if (!emulatorState.isWaitingPortInput) {
+          step();
+        }
+      } catch (error) {
+        console.error(error);
         stop();
-        return;
-      }
-
-      if (!emulatorState.isWaitingPortInput) {
-        step();
       }
     }, RUN_INTERVAL_MS);
     setIsRunning(true);
