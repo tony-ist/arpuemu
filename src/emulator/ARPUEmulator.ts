@@ -273,7 +273,7 @@ export class ARPUEmulator {
   }
 
   private stackOperation(operands: Operand[]) {
-    const isPush = operands[1].toInt() === 0;
+    const isPush = !isBitSet(operands[1].toInt(), 1);
 
     if (isPush) {
       const sourceRegisterIndex = operands[0].toInt();

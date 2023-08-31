@@ -20,7 +20,7 @@ describe('parse', () => {
       ['IMM R2 0 0xFF', [0b0001_1010, 0xFF]],
       ['STR R1 R2', [0b0100_1011]],
       ['LOD R1 R2', [0b0100_1100]],
-      ['SOP R1 1', [0b0100_1101]],
+      ['SOP R1 2', [0b1000_1101]],
       ['BRA 0b00 0b11 0', [0b1100_1110, 0]],
       ['MOV R1 R2', [0b0100_1111]],
     ])('should return bytes for line "%s"', (line, expected) => {

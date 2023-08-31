@@ -282,7 +282,7 @@ describe('ARPUEmulator', () => {
 
     it('should pop', () => {
       const asmLines = [
-        'SOP R1 1',
+        'SOP R1 2',
       ];
       const asmCode = asmLines.join('\n');
       const defaultState = defaultARPUEmulatorState(asmCode);
@@ -301,7 +301,7 @@ describe('ARPUEmulator', () => {
 
     it('should pop 0 from empty stack', () => {
       const asmLines = [
-        'SOP R1 1',
+        'SOP R1 2',
       ];
       const asmCode = asmLines.join('\n');
       const defaultState = defaultARPUEmulatorState(asmCode);
