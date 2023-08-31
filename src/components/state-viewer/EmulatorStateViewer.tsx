@@ -30,6 +30,7 @@ export function EmulatorStateViewer(props: EmulatorStatePropsType) {
     <Box className={styles.emulatorStateContainer}>
       <Box>Cycle (decimal): {emulatorState.cycle}</Box>
       <Box>PC (hex): {toHex([emulatorState.PC])}</Box>
+      <Box>PC (binary): {emulatorState.PC.toString(2).padStart(8, '0')}</Box>
       <PMemViewer
         machineCode={emulatorState.PMEM}
         highlightByte={emulatorState.PC}

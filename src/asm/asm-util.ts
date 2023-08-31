@@ -16,12 +16,12 @@ export function isAlias(line: string) {
   return Object.keys(ALIASES).some((alias) => line.startsWith(alias));
 }
 
-export function padByte(byte: string) {
+export function padHexByte(byte: string) {
   return byte.length === 1 ? '0' + byte : byte;
 }
 
 export function toHex(bytes: number[]) {
-  return bytes.map((byte) => padByte(byte.toString(16).toUpperCase()));
+  return bytes.map((byte) => padHexByte(byte.toString(16).toUpperCase()));
 }
 
 export function fromHex(hex: string[]) {
