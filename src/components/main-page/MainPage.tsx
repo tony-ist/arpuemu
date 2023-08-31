@@ -78,6 +78,7 @@ export function MainPage() {
 
       if (isHalt) {
         stop();
+        return;
       }
 
       if (!emulatorState.isWaitingPortInput) {

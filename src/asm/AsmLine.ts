@@ -89,6 +89,9 @@ export class AsmLine {
   }
 
   isHalt() {
-    return this.mnemonic === 'BRA' && this.operands[2].getLabel() === this.label;
+    return (
+      this.mnemonic === 'BRA' && this.operands[2].getLabel() === this.label ||
+      this.mnemonic === 'RET' && this.operands[0].toInt() === 1
+    );
   }
 }
