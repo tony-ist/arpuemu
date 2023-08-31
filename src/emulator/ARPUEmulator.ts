@@ -195,7 +195,7 @@ export class ARPUEmulator {
     this.updateFlags(this.state.registers[destinationRegisterIndex]);
     this.state.PC += 2;
     this.state.lineIndex += 1;
-    this.state.cycle += 1;
+    this.state.cycle += 2;
   }
 
   private loadImmediate(operands: Operand[]) {
@@ -204,7 +204,7 @@ export class ARPUEmulator {
     this.state.registers[destinationRegisterIndex] = immediate;
     this.state.PC += 2;
     this.state.lineIndex += 1;
-    this.state.cycle += 1;
+    this.state.cycle += 2;
   }
 
   public portInput(value: number) {
@@ -254,7 +254,7 @@ export class ARPUEmulator {
       this.state.lineIndex += 1;
     }
 
-    this.state.cycle += 1;
+    this.state.cycle += 2;
   }
 
   private shouldJump(operands: Operand[]) {
@@ -303,7 +303,7 @@ export class ARPUEmulator {
     this.state.stack.push(this.state.PC + 2);
     this.state.PC = destinationOffset;
     this.state.lineIndex = procedureIndex;
-    this.state.cycle += 1;
+    this.state.cycle += 2;
   }
 
   private return() {

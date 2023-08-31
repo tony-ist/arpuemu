@@ -13,7 +13,7 @@ describe('ARPUEmulator', () => {
       registers: [42, 0, 0, 0],
       PC: 2,
       lineIndex: 1,
-      cycle: 1,
+      cycle: 2,
     });
   });
 
@@ -83,7 +83,7 @@ describe('ARPUEmulator', () => {
       outputPorts: [3, 0, 0, 0],
       PC: 3,
       lineIndex: 2,
-      cycle: 2,
+      cycle: 3,
     });
   });
 
@@ -104,7 +104,7 @@ describe('ARPUEmulator', () => {
           ...defaultState,
           PC: 4,
           lineIndex: 2,
-          cycle: 1,
+          cycle: 2,
         });
       });
 
@@ -125,7 +125,7 @@ describe('ARPUEmulator', () => {
           ...defaultState,
           PC: 0,
           lineIndex: 0,
-          cycle: 1,
+          cycle: 2,
         });
       });
     });
@@ -150,7 +150,7 @@ describe('ARPUEmulator', () => {
             ZF: true,
             PC: 4,
             lineIndex: 2,
-            cycle: 1,
+            cycle: 2,
           });
         });
 
@@ -171,7 +171,7 @@ describe('ARPUEmulator', () => {
             ZF: false,
             PC: 2,
             lineIndex: 1,
-            cycle: 1,
+            cycle: 2,
           });
         });
 
@@ -192,7 +192,7 @@ describe('ARPUEmulator', () => {
             COUTF: true,
             PC: 4,
             lineIndex: 2,
-            cycle: 1,
+            cycle: 2,
           });
         });
 
@@ -213,7 +213,7 @@ describe('ARPUEmulator', () => {
             COUTF: false,
             PC: 2,
             lineIndex: 1,
-            cycle: 1,
+            cycle: 2,
           });
         });
       });
@@ -234,7 +234,7 @@ describe('ARPUEmulator', () => {
             ...defaultState,
             PC: 4,
             lineIndex: 2,
-            cycle: 1,
+            cycle: 2,
           });
         });
 
@@ -253,7 +253,7 @@ describe('ARPUEmulator', () => {
             ...defaultState,
             PC: 4,
             lineIndex: 2,
-            cycle: 1,
+            cycle: 2,
           });
         });
       });
@@ -334,7 +334,7 @@ describe('ARPUEmulator', () => {
       stack: [2],
       PC: 2,
       lineIndex: 1,
-      cycle: 1,
+      cycle: 2,
     });
   });
 
@@ -354,7 +354,7 @@ describe('ARPUEmulator', () => {
       stack: [],
       PC: 2,
       lineIndex: 1,
-      cycle: 2,
+      cycle: 3,
     });
   });
 
@@ -506,7 +506,7 @@ describe('ARPUEmulator', () => {
         LSBF: expectedLSBF,
         PC: 2,
         lineIndex: 1,
-        cycle: 1,
+        cycle: 2,
       });
     });
   });
