@@ -13,7 +13,7 @@ export function isLabel(line: string) {
 }
 
 export function isAlias(line: string) {
-  return Object.keys(ALIASES).some((alias) => line.startsWith(alias));
+  return Object.keys(ALIASES).some((alias) => line.toUpperCase().startsWith(alias));
 }
 
 export function padHexByte(byte: string) {

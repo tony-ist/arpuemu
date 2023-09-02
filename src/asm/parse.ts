@@ -11,6 +11,7 @@ import {
   isLabel,
   isRegister
 } from './asm-util.ts';
+import { ALIASES } from './mnemonics.ts';
 
 export function parseAsmLine(line: string) {
   const mnemonic = parseMnemonic(line);
@@ -62,6 +63,25 @@ export function parseOperand(token: string) {
   return Operand.fromImmediate(token, immediate);
 }
 
+export function replaceAliases(asmCode: string[]) {
+  const result: string[] = [];
+
+  for (const line of asmCode) {
+    if (!isAlias(line)) {
+      result.push(line);
+      continue;
+    }
+    const alias = Object.keys(ALIASES).find((a) => line.toUpperCase().startsWith(a));
+    if (alias === undefined) {
+      throw new Error(`Line ${line} is alias but there is no such key in ALIASES`);
+    }
+    const replaced = line.replace(new RegExp(alias, 'i'), ALIASES[alias]);
+    result.push(replaced);
+  }
+
+  return result;
+}
+
 export function parseAsmLines(asmCode: string[]) {
   const result: AsmLine[] = [];
   let label: string | null = null;
@@ -76,9 +96,6 @@ export function parseAsmLines(asmCode: string[]) {
       result.push(asmLine);
     } else if (isLabel(line)) {
       label = line;
-    } else if (isAlias(line)) {
-      // TODO
-      label = null;
     } else {
       throw new ParseError(`Unrecognized line "${line}"`);
     }

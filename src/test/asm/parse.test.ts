@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseAsmLine, parseOperand } from '../../asm/parse.ts';
+import { parseAsmLine, parseOperand, replaceAliases } from '../../asm/parse.ts';
 import { Operand } from '../../asm/Operand.ts';
 import { ParseError } from '../../asm/ParseError.ts';
 
@@ -46,6 +46,27 @@ describe('parse', () => {
       ['0b1010_0011', 0b10100011],
     ])('should parse %s to be %s', (token, immediate) => {
       expect(parseOperand(token)).toEqual(Operand.fromImmediate(token, immediate));
+    });
+  });
+
+  describe('replaceAliases', () => {
+    it.each([
+      [['jmp .loop'], ['BRA 0 0 .loop']],
+      [['jz .loop'], ['BRA 0 0b10 .loop']],
+      [['jnz .loop'], ['BRA 0 0b11 .loop']],
+      [['jc .loop'], ['BRA 1 0b10 .loop']],
+      [['jnc .loop'], ['BRA 1 0b11 .loop']],
+      [['jmb .loop'], ['BRA 2 0b10 .loop']],
+      [['jnm .loop'], ['BRA 2 0b11 .loop']],
+      [['jlb .loop'], ['BRA 3 0b10 .loop']],
+      [['jnl .loop'], ['BRA 3 0b11 .loop']],
+      [['jnl .loop'], ['BRA 3 0b11 .loop']],
+    ])('should replace alias %s with %s', (alias, actual) => {
+      expect(replaceAliases(alias)).toEqual(actual);
+    });
+
+    it('should not replace other instructions', () => {
+      expect(replaceAliases(['IMM r1 0 2'])).toEqual(['IMM r1 0 2']);
     });
   });
 });
