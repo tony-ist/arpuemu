@@ -1,6 +1,6 @@
 import { Operand } from './Operand';
-import { isAlias, isData } from './asm-util.ts';
-import { ALIAS_OPERAND, ALIASES, INSTRUCTION_MNEMONICS } from './mnemonics.ts';
+import { isData } from './asm-util.ts';
+import { INSTRUCTION_MNEMONICS } from './mnemonics.ts';
 
 export class AsmLine {
   private readonly isData: boolean;
@@ -66,9 +66,18 @@ export class AsmLine {
     return this.mnemonic;
   }
 
+  getAliasMnemonic() {
+    return this.aliasMnemonic;
+  }
+
+  getAliasOperands() {
+    return this.aliasOperands;
+  }
+
   clone() {
     const operandsClone = this.operands.map((operand) => operand.clone());
-    const clone = new AsmLine(this.mnemonic, operandsClone);
+    const aliasOperandsClone = this.aliasOperands?.map((operand) => operand.clone());
+    const clone = new AsmLine(this.mnemonic, operandsClone, this.aliasMnemonic, aliasOperandsClone);
     if (this.label !== undefined) {
       clone.setLabel(this.label);
     }

@@ -16,12 +16,16 @@ interface CodeEditorPropsType {
 }
 
 function prettyPrintAsmLine(asmLine: AsmLine) {
-  const operandStrings = asmLine.getOperands().map((operand) => operand.toString()).join(' ');
+  const aliasMnemonic = asmLine.getAliasMnemonic();
+  const aliasOperands = asmLine.getAliasOperands();
+  const mnemonic = aliasMnemonic === undefined ? asmLine.getMnemonic() : aliasMnemonic;
+  const operands = aliasOperands === undefined ? asmLine.getOperands() : aliasOperands;
+  const operandStrings = operands.map((operand) => operand.toString()).join(' ');
   const offset = asmLine.getOffsetInBytes();
   if (offset === undefined) {
     throw new Error(`Offset in bytes is undefined for line ${asmLine.toString()}`);
   }
-  return `${toHex([offset])}: ${asmLine.getMnemonic()} ${operandStrings}`;
+  return `${toHex([offset])}: ${mnemonic} ${operandStrings}`;
 }
 
 export function CodeEditor(props: CodeEditorPropsType) {

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { parseAsmLine, parseOperand } from '../../asm/parse.ts';
 import { Operand } from '../../asm/Operand.ts';
+import { AsmLine } from '../../asm/AsmLine.ts';
 
 describe('parse', () => {
   describe('parseAsmLine', () => {
@@ -57,6 +58,37 @@ describe('parse', () => {
       ['halt', 'RET 1'],
     ])('should parse alias "%s"', (line, expected) => {
       expect(parseAsmLine(line).toString()).toEqual(expected);
+    });
+
+    it('should store alias mnemonic and operands for JZ', () => {
+      const line = 'jz .loop';
+      const expectedOperands = [
+        Operand.fromImmediate('0', 0),
+        Operand.fromImmediate('0b10', 2),
+        Operand.fromLabel('.loop'),
+      ];
+      const expectedAsmLine = new AsmLine(
+        'BRA',
+        expectedOperands,
+        'JZ',
+        [Operand.fromLabel('.loop')]
+      );
+      expect(parseAsmLine(line)).toEqual(expectedAsmLine);
+    });
+
+    it('should store alias mnemonic and operands for NOP', () => {
+      const line = 'nop';
+      const expectedOperands = [
+        Operand.fromImmediate('R1', 0),
+        Operand.fromImmediate('R1', 0),
+      ];
+      const expectedAsmLine = new AsmLine(
+        'MOV',
+        expectedOperands,
+        'NOP',
+        []
+      );
+      expect(parseAsmLine(line)).toEqual(expectedAsmLine);
     });
   });
 
