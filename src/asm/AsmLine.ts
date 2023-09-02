@@ -1,6 +1,6 @@
 import { Operand } from './Operand';
-import { isData } from './asm-util.ts';
-import { INSTRUCTION_MNEMONICS } from './mnemonics.ts';
+import { isAlias, isData } from './asm-util.ts';
+import { ALIAS_OPERAND, ALIASES, INSTRUCTION_MNEMONICS } from './mnemonics.ts';
 
 export class AsmLine {
   private readonly isData: boolean;
@@ -8,13 +8,17 @@ export class AsmLine {
   private readonly operands: Operand[];
   private readonly sizeInBytes: number;
   private readonly opcode: number;
+  private readonly aliasMnemonic?: string;
+  private readonly aliasOperands?: Operand[];
   private offsetInBytes?: number;
   private label?: string;
 
-  constructor(mnemonic: string, operands: Operand[]) {
+  constructor(mnemonic: string, operands: Operand[], aliasMnemonic?: string, aliasOperands?: Operand[]) {
     this.isData = isData(mnemonic);
-    this.mnemonic = mnemonic.toUpperCase();
+    this.mnemonic = mnemonic;
     this.operands = operands;
+    this.aliasMnemonic = aliasMnemonic;
+    this.aliasOperands = aliasOperands;
     this.sizeInBytes = operands.length === 3 ? 2 : 1;
     this.opcode = INSTRUCTION_MNEMONICS.findIndex((mnemonic) => this.mnemonic === mnemonic);
   }

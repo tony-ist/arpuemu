@@ -1,4 +1,4 @@
-import { parseAsmLines, replaceAliases } from './parse.ts';
+import { parseAsmLines } from './parse.ts';
 import { AsmLine } from './AsmLine';
 import { AssembleError } from './AssembleError.ts';
 
@@ -112,8 +112,7 @@ export function compileIntermediateRepresentation(asmCode: string[]) {
   const noExtraSpacesLines = removeExtraSpaces(trimmedLines);
   const linesWithoutComments = removeComments(noExtraSpacesLines);
   const nonEmptyLines = removeEmpty(linesWithoutComments);
-  const aliasedReplaced = replaceAliases(nonEmptyLines);
-  const asmLines = parseAsmLines(aliasedReplaced);
+  const asmLines = parseAsmLines(nonEmptyLines);
   const filledOffsetsAsmLines = fillOffsets(asmLines);
   return fillImmediates(filledOffsetsAsmLines);
 }

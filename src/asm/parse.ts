@@ -11,11 +11,30 @@ import {
   isLabel,
   isRegister
 } from './asm-util.ts';
-import { ALIASES } from './mnemonics.ts';
+import { ALIAS_OPERAND, ALIASES } from './mnemonics.ts';
 
 export function parseAsmLine(line: string) {
   const mnemonic = parseMnemonic(line);
   const operands = parseOperands(line);
+
+  if (isAlias(line)) {
+    const alias = ALIASES[mnemonic];
+    const targetMnemonic = alias.mnemonic;
+    const targetOperands: Operand[] = [];
+    let operandIndex = 0;
+    for (const targetOperandToken of alias.operandTokens) {
+      if (targetOperandToken === ALIAS_OPERAND) {
+        targetOperands.push(operands[operandIndex]);
+        if (operandIndex < operands.length - 1) {
+          operandIndex += 1;
+        }
+      } else {
+        targetOperands.push(parseOperand(targetOperandToken));
+      }
+    }
+    return new AsmLine(targetMnemonic, targetOperands, mnemonic, operands);
+  }
+
   return new AsmLine(mnemonic, operands);
 }
 
@@ -63,31 +82,12 @@ export function parseOperand(token: string) {
   return Operand.fromImmediate(token, immediate);
 }
 
-export function replaceAliases(asmCode: string[]) {
-  const result: string[] = [];
-
-  for (const line of asmCode) {
-    if (!isAlias(line)) {
-      result.push(line);
-      continue;
-    }
-    const alias = Object.keys(ALIASES).find((a) => line.toUpperCase().startsWith(a));
-    if (alias === undefined) {
-      throw new Error(`Line ${line} is alias but there is no such key in ALIASES`);
-    }
-    const replaced = line.replace(new RegExp(alias, 'i'), ALIASES[alias]);
-    result.push(replaced);
-  }
-
-  return result;
-}
-
 export function parseAsmLines(asmCode: string[]) {
   const result: AsmLine[] = [];
   let label: string | null = null;
 
   for (const line of asmCode) {
-    if (isInstruction(line) || isData(line)) {
+    if (isInstruction(line) || isData(line) || isAlias(line)) {
       const asmLine = parseAsmLine(line);
       if (label !== null) {
         asmLine.setLabel(label);

@@ -13,7 +13,19 @@ export function isLabel(line: string) {
 }
 
 export function isAlias(line: string) {
-  return Object.keys(ALIASES).some((alias) => line.toUpperCase().startsWith(alias));
+  const tokens = line.split(' ');
+  const alias = ALIASES[tokens[0].toUpperCase()];
+  const mnemonic = tokens[0].toUpperCase();
+
+  if (alias === undefined) {
+    return false;
+  }
+
+  if (mnemonic === alias.mnemonic) {
+    return tokens.length - 1 !== alias.operandTokens.length;
+  }
+
+  return true;
 }
 
 export function padHexByte(byte: string) {
