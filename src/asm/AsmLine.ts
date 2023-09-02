@@ -13,7 +13,7 @@ export class AsmLine {
 
   constructor(mnemonic: string, operands: Operand[]) {
     this.isData = isData(mnemonic);
-    this.mnemonic = mnemonic;
+    this.mnemonic = mnemonic.toUpperCase();
     this.operands = operands;
     this.sizeInBytes = operands.length === 3 ? 2 : 1;
     this.opcode = INSTRUCTION_MNEMONICS.findIndex((mnemonic) => this.mnemonic === mnemonic);

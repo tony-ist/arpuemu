@@ -22,17 +22,9 @@ export function parseMnemonic(line: string) {
   return line.split(' ')[0].toUpperCase();
 }
 
-function operandSizeInBitsByIndex(index: number) {
-  if (index >= 3) {
-    throw new ParseError('Only 3 operands are supported');
-  }
-
-  return index === 2 ? 8 : 2;
-}
-
 export function parseOperands(line: string) {
   const tokens = line.split(' ').slice(1);
-  return tokens.map((token, index) => parseOperand(token, operandSizeInBitsByIndex(index)));
+  return tokens.map((token) => parseOperand(token));
 }
 
 export function parseImmediateValue(token: string) {
@@ -53,7 +45,7 @@ export function parseImmediateValue(token: string) {
   throw new ParseError(`Unrecognized immediate "${token}"`);
 }
 
-export function parseOperand(token: string, sizeInBits?: number) {
+export function parseOperand(token: string) {
   if (isLabel(token)) {
     return Operand.fromLabel(token);
   }
@@ -65,10 +57,6 @@ export function parseOperand(token: string, sizeInBits?: number) {
     immediate = parseInt(token[1]) - 1;
   } else {
     immediate = parseImmediateValue(token);
-  }
-
-  if (sizeInBits !== undefined && immediate >= Math.pow(2, sizeInBits)) {
-    throw new ParseError(`Immediate value for operand "${token}" should fit in ${sizeInBits} bits`);
   }
 
   return Operand.fromImmediate(token, immediate);

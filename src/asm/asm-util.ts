@@ -5,7 +5,7 @@ export function isInstruction(line: string) {
 }
 
 export function isData(line: string) {
-  return line.startsWith(DATA_MNEMONIC);
+  return line.toUpperCase().startsWith(DATA_MNEMONIC);
 }
 
 export function isLabel(line: string) {

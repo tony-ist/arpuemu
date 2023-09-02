@@ -50,6 +50,16 @@ describe('assemble', () => {
       expect(actual.length).toEqual(1);
       expect(actual[0].getLabel()).toEqual('.a');
     });
+
+    it('should parse data word', () => {
+      const actual = parseAsmLines([
+        '.a',
+        'dw 0xFF',
+      ]);
+      expect(actual.length).toEqual(1);
+      expect(actual[0].getIsData()).toEqual(true);
+      expect(actual[0].getOperands()[0].toInt()).toEqual(0xFF);
+    });
   });
 
   describe('fillOffsets', () => {

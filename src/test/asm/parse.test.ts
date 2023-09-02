@@ -47,9 +47,5 @@ describe('parse', () => {
     ])('should parse %s to be %s', (token, immediate) => {
       expect(parseOperand(token)).toEqual(Operand.fromImmediate(token, immediate));
     });
-
-    it('should throw ParseError when immediate exceeds size in bits', () => {
-      expect(() => parseOperand('0x100', 8)).toThrow(ParseError);
-    });
   });
 });
