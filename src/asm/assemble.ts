@@ -48,6 +48,10 @@ export function fillImmediates(asmLines: AsmLine[]) {
       if (label !== undefined) {
         const labelIndex = getLabelIndex(asmLines, label);
 
+        if (labelIndex === -1) {
+          throw new AssembleError(`Cannot fill immediate: no label for line ${asmLine.toString()}`);
+        }
+
         const isLoadImmediate = asmLine.getMnemonic() === 'IMM';
         const isDataReference = asmLines[labelIndex].getIsData();
 
