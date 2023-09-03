@@ -69,6 +69,17 @@ export function MainPage() {
   }
 
   function run() {
+   runToCycle(+Infinity);
+  }
+
+  function stop() {
+    if (intervalRef.current !== null) {
+      clearInterval(intervalRef.current);
+    }
+    setIsRunning(false);
+  }
+
+  function runToCycle(cycle: number) {
     intervalRef.current = setInterval(() => {
       if (emulatorState === null) {
         throw new Error('Should initialize emulator before using run on it');
@@ -77,7 +88,7 @@ export function MainPage() {
       try {
         const isHalt = emulatorState.asmLines[emulatorState.lineIndex].isHalt();
 
-        if (isHalt) {
+        if (isHalt || emulatorState.cycle >= cycle) {
           stop();
           return;
         }
@@ -91,13 +102,6 @@ export function MainPage() {
       }
     }, RUN_INTERVAL_MS);
     setIsRunning(true);
-  }
-
-  function stop() {
-    if (intervalRef.current !== null) {
-      clearInterval(intervalRef.current);
-    }
-    setIsRunning(false);
   }
 
   function portInput() {
@@ -138,6 +142,7 @@ export function MainPage() {
               step={step}
               run={run}
               stop={stop}
+              runToCycle={runToCycle}
               isEditing={isEditing}
               setIsEditing={setIsEditing}
               isRunning={isRunning}

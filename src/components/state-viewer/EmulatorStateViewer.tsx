@@ -32,9 +32,12 @@ export function EmulatorStateViewer(props: EmulatorStatePropsType) {
       <Box>Cycle (decimal): {emulatorState.cycle}</Box>
       <Box>PC (hex): {toHex([emulatorState.PC])}</Box>
       <Box>PC (binary): {emulatorState.PC.toString(2).padStart(8, '0')}</Box>
-      <ScreenViewer
-        pixels={emulatorState.screen}
-      />
+      {
+        emulatorState.isScreenAttached &&
+        <ScreenViewer
+          pixels={emulatorState.screen}
+        />
+      }
       <PMemViewer
         machineCode={emulatorState.PMEM}
         highlightByte={emulatorState.PC}

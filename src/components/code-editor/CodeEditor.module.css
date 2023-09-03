@@ -6,7 +6,7 @@
 }
 
 .compiledCodeContainer {
-  height: calc(100vh - 70px);
+  height: calc(100vh - 130px);
   overflow-y: scroll;
   resize: vertical;
 }
