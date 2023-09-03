@@ -33,7 +33,7 @@ export function App() {
   const [emulatorAndState, setEmulatorAndState] = useState<EmulatorAndStateType | null>(null);
 
   function initEmulator(asmCode: string) {
-    const emulator = new ARPUEmulator(asmCode);
+    const emulator = new ARPUEmulator(asmCode, true);
     setEmulatorAndState( {
       emulator,
       emulatorState: emulator.getState(),

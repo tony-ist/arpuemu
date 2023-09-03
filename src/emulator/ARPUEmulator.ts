@@ -1,4 +1,4 @@
-import { BITNESS, RAM_SIZE_IN_BYTES, WORD_SIZE } from '../const/emulator-constants.ts';
+import { BITNESS, RAM_SIZE_IN_BYTES, SCREEN_SIZE, WORD_SIZE } from '../const/emulator-constants.ts';
 import { AsmLine } from '../asm/AsmLine.ts';
 import { compileIntermediateRepresentation, IRToMachineCode } from '../asm/assemble.ts';
 import { Operand } from '../asm/Operand.ts';
@@ -30,9 +30,11 @@ export interface ARPUEmulatorState {
   outputPorts: number[];
   isWaitingPortInput: boolean;
   cycle: number;
+  screen: boolean[];
+  isScreenAttached: boolean;
 }
 
-export function defaultARPUEmulatorState(asmCode: string) {
+export function defaultARPUEmulatorState(asmCode: string, isScreenAttached: boolean = false) {
   const asmLines = compileIntermediateRepresentation(asmCode.split('\n'));
   return {
     asmLines,
@@ -50,6 +52,8 @@ export function defaultARPUEmulatorState(asmCode: string) {
     outputPorts: [0, 0, 0, 0],
     isWaitingPortInput: false,
     cycle: 0,
+    screen: new Array(SCREEN_SIZE * SCREEN_SIZE).fill(false),
+    isScreenAttached,
   };
 }
 
@@ -74,8 +78,8 @@ export class ARPUEmulator {
     MOV: this.move.bind(this),
   };
 
-  constructor(asmCode: string) {
-    this.state = defaultARPUEmulatorState(asmCode);
+  constructor(asmCode: string, isScreenAttached: boolean = false) {
+    this.state = defaultARPUEmulatorState(asmCode, isScreenAttached);
   }
 
   public step() {
@@ -234,10 +238,15 @@ export class ARPUEmulator {
   private portStore(operands: Operand[]) {
     const sourceRegisterIndex = operands[0].toInt();
     const portIndex = operands[1].toInt();
-    this.state.outputPorts[portIndex] = this.state.registers[sourceRegisterIndex];
+    const value = this.state.registers[sourceRegisterIndex];
+    this.state.outputPorts[portIndex] = value;
     this.state.PC += 1;
     this.state.lineIndex += 1;
     this.state.cycle += 1;
+
+    if (portIndex === 0 && this.state.isScreenAttached) {
+      this.updateScreen(value);
+    }
   }
 
   private branch(operands: Operand[]) {
@@ -385,5 +394,18 @@ export class ARPUEmulator {
     if (binaryData.length < RAM_SIZE_IN_BYTES) {
       this.state.RAM.fill(0, binaryData.length);
     }
+  }
+
+  private updateScreen(instruction: number) {
+    const coordinate = instruction >> 2;
+    const writeValue = isBitSet(instruction, 0);
+    const setAllPixels = isBitSet(instruction, 1);
+
+    if (setAllPixels) {
+      this.state.screen = new Array(SCREEN_SIZE * SCREEN_SIZE).fill(writeValue);
+      return;
+    }
+
+    this.state.screen[coordinate] = writeValue;
   }
 }

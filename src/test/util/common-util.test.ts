@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bitwiseNot, groupElements, isBitSet } from '../../util/common-util.ts';
+import { bitwiseNot, groupElements, isBitSet, transpose } from '../../util/common-util.ts';
 
 describe('isBitSet', () => {
   it.each([
@@ -36,5 +36,11 @@ describe('groupElements', () => {
 
   it('should group elements by 1', () => {
     expect(groupElements([1, 2, 3], 1)).toEqual([[1], [2], [3]]);
+  });
+});
+
+describe('transpose', () => {
+  it('should transpose array', () => {
+    expect(transpose([[0, 0, 0], [1, 1, 1], [2, 2, 2]])).toEqual([[0, 1, 2], [0, 1, 2], [0, 1, 2]]);
   });
 });

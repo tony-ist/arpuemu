@@ -39,3 +39,17 @@ export function groupElements<T>(array: T[], groupSize: number) {
 
   return result;
 }
+
+export function transpose<T>(array: T[][]) {
+  const result = [];
+
+  for (let i = 0; i < array[0].length; i++) {
+    const row = [];
+    for (let j = 0; j < array.length; j++) {
+      row.push(array[j][i]);
+    }
+    result.push(row);
+  }
+
+  return result;
+}
