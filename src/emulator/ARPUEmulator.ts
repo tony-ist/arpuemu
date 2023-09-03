@@ -300,7 +300,10 @@ export class ARPUEmulator {
 
   private popStack() {
     const poppedValue = this.state.stack.pop();
-    return poppedValue === undefined ? 0 : poppedValue;
+    if (poppedValue === undefined) {
+      throw new Error('Popping from empty stack');
+    }
+    return poppedValue;
   }
 
   private call(operands: Operand[]) {
