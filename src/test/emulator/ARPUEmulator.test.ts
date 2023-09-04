@@ -299,23 +299,14 @@ describe('ARPUEmulator', () => {
       });
     });
 
-    it('should pop 0 from empty stack', () => {
+    it('should throw error on pop 0 from empty stack', () => {
       const asmLines = [
         'SOP R1 2',
       ];
       const asmCode = asmLines.join('\n');
-      const defaultState = defaultARPUEmulatorState(asmCode);
       const emulator = new ARPUEmulator(asmCode);
       emulator.getState().registers[0] = 42;
-      emulator.step();
-      expect(emulator.getState()).toEqual({
-        ...defaultState,
-        registers: [0, 0, 0, 0],
-        stack: [],
-        PC: 1,
-        lineIndex: 1,
-        cycle: 1,
-      });
+      expect(() => emulator.step()).toThrowError('Popping from empty stack');
     });
   });
 

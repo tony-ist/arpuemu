@@ -27,5 +27,5 @@ export const ScreenViewer = (props: ScreenViewerPropsType) => {
         }
       </Box>
     </Box>
-  )
+  );
 }

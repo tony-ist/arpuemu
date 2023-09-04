@@ -31,6 +31,7 @@ export interface ARPUEmulatorState {
   isWaitingPortInput: boolean;
   cycle: number;
   screen: boolean[];
+  screenBuffer: boolean[];
   isScreenAttached: boolean;
 }
 
@@ -53,6 +54,7 @@ export function defaultARPUEmulatorState(asmCode: string, isScreenAttached: bool
     isWaitingPortInput: false,
     cycle: 0,
     screen: new Array(SCREEN_SIZE * SCREEN_SIZE).fill(false),
+    screenBuffer: new Array(SCREEN_SIZE * SCREEN_SIZE).fill(false),
     isScreenAttached,
   };
 }
@@ -244,7 +246,7 @@ export class ARPUEmulator {
     this.state.lineIndex += 1;
     this.state.cycle += 1;
 
-    if (portIndex === 0 && this.state.isScreenAttached) {
+    if (portIndex === 1 && this.state.isScreenAttached) {
       this.updateScreen(value);
     }
   }
@@ -400,15 +402,14 @@ export class ARPUEmulator {
   }
 
   private updateScreen(instruction: number) {
-    const coordinate = instruction >> 2;
-    const writeValue = isBitSet(instruction, 0);
-    const setAllPixels = isBitSet(instruction, 1);
+    const coordinate = instruction & 0b111_111;
+    const shouldDisplayBuffer = isBitSet(instruction, 6);
 
-    if (setAllPixels) {
-      this.state.screen = new Array(SCREEN_SIZE * SCREEN_SIZE).fill(writeValue);
-      return;
+    if (shouldDisplayBuffer) {
+      this.state.screen = [...this.state.screenBuffer];
+      this.state.screenBuffer = new Array(SCREEN_SIZE * SCREEN_SIZE).fill(false);
+    } else {
+      this.state.screenBuffer[coordinate] = true;
     }
-
-    this.state.screen[coordinate] = writeValue;
   }
 }
