@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
-import Modal from '@mui/material/Modal';
 
 interface EmulatorControlsPropsType {
   compile: () => void;
@@ -11,18 +10,26 @@ interface EmulatorControlsPropsType {
   run: () => void;
   stop: () => void;
   runToCycle: (cycle: number) => void;
+  runToPC: (pc: number) => void;
   isEditing: boolean;
   setIsEditing: (isEditing: boolean) => void;
   isRunning: boolean;
 }
 
 export function EmulatorControls(props: EmulatorControlsPropsType) {
-  const { compile, step, run, stop, runToCycle, isRunning, isEditing, setIsEditing } = props;
+  const { compile, step, run, stop, runToCycle, runToPC, isRunning, isEditing, setIsEditing } = props;
   const [cycleInputValue, setCycleInputValue] = useState('');
+  const [pcInputValue, setPCInputValue] = useState('');
 
   function onCycleInputKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
     if (event.code === 'Enter') {
       runToCycle(parseInt(cycleInputValue));
+    }
+  }
+
+  function onPCInputKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (event.code === 'Enter') {
+      runToPC(parseInt(pcInputValue, 16));
     }
   }
 
@@ -76,8 +83,7 @@ export function EmulatorControls(props: EmulatorControlsPropsType) {
       </Box>
       <Box className={styles.buttonsRow}>
         <TextField
-          autoFocus
-          label="Run to cycle"
+          label="Run to cycle (decimal)"
           value={cycleInputValue}
           onKeyDown={onCycleInputKeyDown}
           onChange={(event) => setCycleInputValue(event.target.value)}
@@ -89,6 +95,22 @@ export function EmulatorControls(props: EmulatorControlsPropsType) {
           disabled={isEditing || isRunning}
         >
           Run to cycle
+        </Button>
+      </Box>
+      <Box className={styles.buttonsRow}>
+        <TextField
+          label="Run to PC (hex)"
+          value={pcInputValue}
+          onKeyDown={onPCInputKeyDown}
+          onChange={(event) => setPCInputValue(event.target.value)}
+          disabled={isEditing || isRunning}
+        />
+        <Button
+          variant="text"
+          onClick={() => runToPC(parseInt(pcInputValue, 16))}
+          disabled={isEditing || isRunning}
+        >
+          Run to PC
         </Button>
       </Box>
     </Box>

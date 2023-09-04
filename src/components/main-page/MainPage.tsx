@@ -11,6 +11,11 @@ import Container from '@mui/material/Container';
 
 const RUN_INTERVAL_MS = 1;
 
+interface RunToOptions {
+  cycle?: number;
+  pc?: number;
+}
+
 export function MainPage() {
   const { initEmulator, emulatorState, step: emulatorStep, portInput: emulatorPortInput } = useContext(EmulatorContext);
   const [asmCode, setAsmCode] = useState('');
@@ -69,7 +74,7 @@ export function MainPage() {
   }
 
   function run() {
-   runToCycle(+Infinity);
+   runTo({ cycle: +Infinity });
   }
 
   function stop() {
@@ -79,7 +84,9 @@ export function MainPage() {
     setIsRunning(false);
   }
 
-  function runToCycle(cycle: number) {
+  function runTo(options: RunToOptions) {
+    const { cycle = +Infinity, pc = +Infinity } = options;
+
     intervalRef.current = setInterval(() => {
       if (emulatorState === null) {
         throw new Error('Should initialize emulator before using run on it');
@@ -88,7 +95,7 @@ export function MainPage() {
       try {
         const isHalt = emulatorState.asmLines[emulatorState.lineIndex].isHalt();
 
-        if (isHalt || emulatorState.cycle >= cycle) {
+        if (isHalt || emulatorState.cycle >= cycle || emulatorState.PC === pc) {
           stop();
           return;
         }
@@ -142,7 +149,8 @@ export function MainPage() {
               step={step}
               run={run}
               stop={stop}
-              runToCycle={runToCycle}
+              runToCycle={(cycle) => runTo({ cycle })}
+              runToPC={(pc) => runTo({ pc })}
               isEditing={isEditing}
               setIsEditing={setIsEditing}
               isRunning={isRunning}
