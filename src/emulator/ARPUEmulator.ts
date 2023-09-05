@@ -402,8 +402,8 @@ export class ARPUEmulator {
   }
 
   private updateScreen(instruction: number) {
-    const coordinate = instruction & 0b111_111;
-    const shouldDisplayBuffer = isBitSet(instruction, 6);
+    const coordinate = (instruction & 0b111_111_00) >> 2;
+    const shouldDisplayBuffer = isBitSet(instruction, 1);
 
     if (shouldDisplayBuffer) {
       this.state.screen = [...this.state.screenBuffer];
