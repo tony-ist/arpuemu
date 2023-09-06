@@ -34,16 +34,9 @@ export function EmulatorStateViewer(props: EmulatorStatePropsType) {
       <Box>PC (binary): {emulatorState.PC.toString(2).padStart(8, '0')}</Box>
       {
         emulatorState.isScreenAttached &&
-        <Box>
-          <ScreenViewer
-            title='Screen'
-            pixels={emulatorState.screen}
-          />
-          <ScreenViewer
-            title='Screen Buffer'
-            pixels={emulatorState.screenBuffer}
-          />
-        </Box>
+        <ScreenViewer
+          pixels={emulatorState.screen}
+        />
       }
       <PMemViewer
         machineCode={emulatorState.PMEM}

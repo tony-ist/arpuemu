@@ -4,16 +4,15 @@ import { SCREEN_SIZE } from '../../const/emulator-constants.ts';
 import styles from './ScreenViewer.module.css';
 
 interface ScreenViewerPropsType {
-  title?: string;
   pixels: boolean[];
 }
 
 export const ScreenViewer = (props: ScreenViewerPropsType) => {
-  const { pixels, title = 'Screen' } = props;
+  const { pixels } = props;
   const rows = transpose(groupElements(pixels, SCREEN_SIZE));
   return (
     <Box className={styles.container}>
-      <Box className={styles.heading}>{ title }</Box>
+      <Box className={styles.heading}>Screen</Box>
       <Box className={styles.screenContainer}>
         {
           rows.map((row) => (
@@ -29,4 +28,4 @@ export const ScreenViewer = (props: ScreenViewerPropsType) => {
       </Box>
     </Box>
   );
-};
+}
