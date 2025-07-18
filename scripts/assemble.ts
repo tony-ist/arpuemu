@@ -8,8 +8,8 @@ function main(): void {
   const args = process.argv.slice(2);
   
   if (args.length !== 2) {
-    console.error('Usage: node assemble.ts <input.s> <output.hex>');
-    console.error('Example: node assemble.ts input.s output.hex');
+    console.error('Usage: npm run assemble <assembly_file.s> <text_hex_file.hex>');
+    console.error('Example: npm run assemble input.s output.hex');
     process.exit(1);
   }
 
@@ -32,6 +32,7 @@ function main(): void {
     
     console.log(`Successfully assembled ${inputFile} to ${outputFile}`);
     console.log(`Output: ${hexOutput}`);
+    console.log(`Saved to ${outputFile}`);
   } catch (error) {
     console.error('Assembly error:', (error as Error).message);
     process.exit(1);

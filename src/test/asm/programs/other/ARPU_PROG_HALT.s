@@ -1,0 +1,2 @@
+IMM R1 0 0xFF
+RET 1
