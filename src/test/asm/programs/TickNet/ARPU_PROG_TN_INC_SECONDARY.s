@@ -24,8 +24,8 @@
 // Get the next packet
 @define TN_COMMAND_NEXT_PACKET 4
 
-imm r1 @TN_COMMAND_ON
-pst r1 @TN_COMMAND_PORT // Turn the TN interface on
+imm r4 @TN_COMMAND_ON
+pst r4 @TN_COMMAND_PORT // Turn the TN interface on
 
 .loop
 cal .receive
@@ -37,9 +37,9 @@ jmp .loop
 imm r2 1
 
 .receive_loop
-imm r1 @TN_COMMAND_NEXT_PACKET
-pst r1 @TN_COMMAND_PORT // Next packet command
-pst r1 @TN_NEXT_DATA_PORT // Write anything to TN_NEXT_DATA_PORT to trigger next data byte command
+imm r4 @TN_COMMAND_NEXT_PACKET
+pst r4 @TN_COMMAND_PORT // Next packet command
+pst r4 @TN_NEXT_DATA_PORT // Write anything to TN_NEXT_DATA_PORT to trigger next data byte command
 pld r1 // Read data from input port into r1
 
 imm r3 @MAX_RECEIVE_ATTEMPTS
@@ -58,6 +58,6 @@ pst r2 @TN_RECEPIENT_ADDR_PORT
 ret
 
 .halt
-imm r1 @TN_COMMAND_OFF
-pst r1 @TN_COMMAND_PORT // Turn the interface off
+imm r4 @TN_COMMAND_OFF
+pst r4 @TN_COMMAND_PORT // Turn the interface off
 halt

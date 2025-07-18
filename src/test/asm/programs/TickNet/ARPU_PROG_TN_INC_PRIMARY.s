@@ -1,5 +1,7 @@
 // This program sends a number between instances of 2 ARPUs, which increment the number on every iteration and send it back
 // This is a PRIMARY version of the program, this first sends the INITIAL_NUMBER to RECIPIENT_ADDR and waits for INITIAL_NUMBER + 1 to arrive back, then sends INITIAL_NUMBER + 2 and so on
+// One cycle (from pld to pld) takes about 5 minutes
+// So to count from 1 to 25 it takes about 25 / 2 * 5 = 60 minutes
 
 // The address of the other CPU where instance of this program is being run
 @define RECIPIENT_ADDR 43
@@ -25,8 +27,8 @@
 // Get the next packet
 @define TN_COMMAND_NEXT_PACKET 4
 
-imm r1 @TN_COMMAND_ON
-pst r1 @TN_COMMAND_PORT // Turn the TN interface on
+imm r4 @TN_COMMAND_ON
+pst r4 @TN_COMMAND_PORT // Turn the TN interface on
 
 imm r1 @INITIAL_NUMBER
 cal .send
@@ -40,15 +42,12 @@ imm r2 @STOP_NUMBER
 sub r2 r1
 jc .loop
 
-imm r1 @TN_COMMAND_OFF
-pst r1 @TN_COMMAND_PORT // Turn the interface off
-
-halt
+cal .halt
 
 .receive // Waits for first non zero packet, returns it in register 1
-imm r1 @TN_COMMAND_NEXT_PACKET
-pst r1 @TN_COMMAND_PORT // Next packet command
-pst r1 @TN_NEXT_DATA_PORT // Write anything to TN_NEXT_DATA_PORT to trigger next data byte command
+imm r4 @TN_COMMAND_NEXT_PACKET
+pst r4 @TN_COMMAND_PORT // Next packet command
+pst r4 @TN_NEXT_DATA_PORT // Write anything to TN_NEXT_DATA_PORT to trigger next data byte command
 pld r1 // Read data from input port into r1
 mov r1 r1 // Update zero flag
 jz .receive // Zero data means that there was no transmission yet, so try again
@@ -59,3 +58,8 @@ pst r1 @TN_DATA_PORT
 imm r2 @RECIPIENT_ADDR
 pst r2 @TN_RECEPIENT_ADDR_PORT
 ret
+
+.halt
+imm r4 @TN_COMMAND_OFF
+pst r4 @TN_COMMAND_PORT // Turn the interface off
+halt
