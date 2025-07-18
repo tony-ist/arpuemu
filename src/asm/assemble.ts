@@ -1,6 +1,7 @@
-import { parseAsmLines } from './parse.ts';
+import { parseAsmLines, parseDefinitions } from './parse.ts';
 import { AsmLine } from './AsmLine';
 import { AssembleError } from './AssembleError.ts';
+import { isDefinition } from './asm-util.ts';
 
 function removeInlineComment(line: string) {
   const index = line.indexOf('//');
@@ -116,7 +117,9 @@ export function compileIntermediateRepresentation(asmCode: string[]) {
   const noExtraSpacesLines = removeExtraSpaces(trimmedLines);
   const linesWithoutComments = removeComments(noExtraSpacesLines);
   const nonEmptyLines = removeEmpty(linesWithoutComments);
-  const asmLines = parseAsmLines(nonEmptyLines);
+  const definitions = parseDefinitions(nonEmptyLines);
+  const linesWithoutDefinitions = nonEmptyLines.filter(line => !isDefinition(line));
+  const asmLines = parseAsmLines(linesWithoutDefinitions, definitions); 
   const filledOffsetsAsmLines = fillOffsets(asmLines);
   return fillImmediates(filledOffsetsAsmLines);
 }

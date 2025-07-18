@@ -9,13 +9,14 @@ import {
   isHexNumber,
   isInstruction,
   isLabel,
-  isRegister
+  isRegister,
+  isDefinition
 } from './asm-util.ts';
 import { ALIAS_OPERAND, ALIASES } from './mnemonics.ts';
 
-export function parseAsmLine(line: string) {
+export function parseAsmLine(line: string, definitions: { [key: string]: string } = {}) {
   const mnemonic = parseMnemonic(line);
-  const operands = parseOperands(line);
+  const operands = parseOperands(line, definitions);
 
   if (isAlias(line)) {
     const alias = ALIASES[mnemonic];
@@ -29,7 +30,7 @@ export function parseAsmLine(line: string) {
           operandIndex += 1;
         }
       } else {
-        targetOperands.push(parseOperand(targetOperandToken));
+        targetOperands.push(parseOperand(targetOperandToken, definitions));
       }
     }
     return new AsmLine(targetMnemonic, targetOperands, mnemonic, operands);
@@ -42,9 +43,9 @@ export function parseMnemonic(line: string) {
   return line.split(' ')[0].toUpperCase();
 }
 
-export function parseOperands(line: string) {
+export function parseOperands(line: string, definitions: { [key: string]: string } = {}) {
   const tokens = line.split(' ').slice(1);
-  return tokens.map((token) => parseOperand(token));
+  return tokens.map((token) => parseOperand(token, definitions));
 }
 
 export function parseImmediateValue(token: string) {
@@ -65,9 +66,19 @@ export function parseImmediateValue(token: string) {
   throw new ParseError(`Unrecognized immediate "${token}"`);
 }
 
-export function parseOperand(token: string) {
+export function parseOperand(token: string, definitions: { [key: string]: string } = {}) {
   if (isLabel(token)) {
     return Operand.fromLabel(token);
+  }
+
+  // Check if token is a definition reference
+  if (token.startsWith('@')) {
+    const definitionName = token.slice(1);
+    const definitionValue = definitions[definitionName];
+    if (definitionValue !== undefined) {
+      return parseOperand(definitionValue, definitions);
+    }
+    throw new ParseError(`Undefined definition "${token}"`);
   }
 
   let immediate;
@@ -82,13 +93,13 @@ export function parseOperand(token: string) {
   return Operand.fromImmediate(token, immediate);
 }
 
-export function parseAsmLines(asmCode: string[]) {
+export function parseAsmLines(asmCode: string[], definitions: { [key: string]: string } = {}) {
   const result: AsmLine[] = [];
   let label: string | null = null;
 
   for (const line of asmCode) {
     if (isInstruction(line) || isData(line) || isAlias(line)) {
-      const asmLine = parseAsmLine(line);
+      const asmLine = parseAsmLine(line, definitions);
       if (label !== null) {
         asmLine.setLabel(label);
         label = null;
@@ -102,4 +113,27 @@ export function parseAsmLines(asmCode: string[]) {
   }
 
   return result;
+}
+
+export function parseDefinitions(asmCode: string[]) {
+  const result: { [key: string]: string } = {};
+  for (const line of asmCode) {
+    if (isDefinition(line)) {
+      const definition = parseDefinition(line);
+      result[definition.name] = definition.value;
+    }
+  }
+  return result;
+}
+
+export function parseDefinition(line: string) {
+  const tokens = line.split(' ');
+  if (tokens.length !== 3) {
+    throw new ParseError(`Invalid definition format: "${line}". Expected: @DEFINE NAME VALUE`);
+  }
+  
+  const name = tokens[1];
+  const value = tokens[2];
+  
+  return { name, value };
 }

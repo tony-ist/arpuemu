@@ -55,3 +55,7 @@ export function isBinaryNumber(token: string) {
 export function isRegister(token:string) {
   return token.toUpperCase().startsWith('R');
 }
+
+export function isDefinition(line: string) {
+  return line.toUpperCase().startsWith('@DEFINE');
+}

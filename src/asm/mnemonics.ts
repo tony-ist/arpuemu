@@ -36,35 +36,35 @@ export const ALIASES: {[key: string]: TargetInstruction } = {
     mnemonic: 'BRA',
     operandTokens: ['0', '0', ALIAS_OPERAND],
   },
-  JZ: {
+  JZ: { // Jump if zero
     mnemonic: 'BRA',
     operandTokens: ['0', '0b10', ALIAS_OPERAND],
   },
-  JNZ: {
+  JNZ: { // Jump if not zero
     mnemonic: 'BRA',
     operandTokens: ['0', '0b11', ALIAS_OPERAND],
   },
-  JC: {
+  JC: { // Jump if carry
     mnemonic: 'BRA',
     operandTokens: ['1', '0b10', ALIAS_OPERAND],
   },
-  JNC: {
+  JNC: { // Jump if not carry
     mnemonic: 'BRA',
     operandTokens: ['1', '0b11', ALIAS_OPERAND],
   },
-  JMB: {
+  JMB: { // Jump if most significant bit is set
     mnemonic: 'BRA',
     operandTokens: ['2', '0b10', ALIAS_OPERAND],
   },
-  JNM: {
+  JNM: { // Jump if most significant bit is not set
     mnemonic: 'BRA',
     operandTokens: ['2', '0b11', ALIAS_OPERAND],
   },
-  JLB: {
+  JLB: { // Jump if least significant bit is set
     mnemonic: 'BRA',
     operandTokens: ['3', '0b10', ALIAS_OPERAND],
   },
-  JNL: {
+  JNL: { // Jump if least significant bit is not set
     mnemonic: 'BRA',
     operandTokens: ['3', '0b11', ALIAS_OPERAND],
   },
@@ -123,6 +123,10 @@ export const ALIASES: {[key: string]: TargetInstruction } = {
   LSH: {
     mnemonic: 'ADD',
     operandTokens: [ALIAS_OPERAND, ALIAS_OPERAND],
+  },
+  PLD: { // Since we have only 1 input port, make an alias to skip writing second argument 0
+    mnemonic: 'PLD',
+    operandTokens: [ALIAS_OPERAND, '0'],
   },
   NOP: {
     mnemonic: 'MOV',

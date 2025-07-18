@@ -109,4 +109,24 @@ describe('assemble', () => {
       expect(removeExtraSpaces(['   q w', 'q   w', 'q w   ', ' q w '])).toEqual([' q w', 'q w', 'q w ', ' q w ']);
     });
   });
+
+  describe('definitions', () => {
+    it('should assemble definitions in instructions', () => {
+      const actual = assembleLines([
+        '@DEFINE VALUE 3',
+        'IMM R1 0 @VALUE',
+        'PST @VALUE @VALUE',
+      ]);
+      expect(actual).toEqual([0b0000_1010, 0b0000_0011, 0b1111_1000]);
+    });
+
+    it('should assemble definitions in aliases', () => {
+      const actual = assembleLines([
+        '@DEFINE VALUE R2',
+        'PUSH @VALUE',
+        'POP @VALUE',
+      ]);
+      expect(actual).toEqual([0b0001_1101, 0b1001_1101]);
+    });
+  });
 });
