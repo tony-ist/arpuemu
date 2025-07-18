@@ -49,7 +49,7 @@ export function defaultARPUEmulatorState(asmCode: string, isScreenAttached: bool
     PMEM: IRToMachineCode(asmLines),
     RAM: new Array(RAM_SIZE_IN_BYTES).fill(0),
     stack: [],
-    inputPorts: [0, 0, 0, 0],
+    inputPorts: [0],
     outputPorts: [0, 0, 0, 0],
     isWaitingPortInput: false,
     cycle: 0,

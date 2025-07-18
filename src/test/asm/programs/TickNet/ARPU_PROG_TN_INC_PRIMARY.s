@@ -8,7 +8,7 @@
 // Initial number to send
 @define INITIAL_NUMBER 1
 // When this number is reached then HALT the program
-@define STOP_NUMBER 25
+@define STOP_NUMBER 254
 
 // Send anything to TN_NEXT_DATA_PORT to get next data byte 
 @define TN_NEXT_DATA_PORT 0
@@ -48,9 +48,10 @@ cal .halt
 imm r4 @TN_COMMAND_NEXT_PACKET
 pst r4 @TN_COMMAND_PORT // Next packet command
 pst r4 @TN_NEXT_DATA_PORT // Write anything to TN_NEXT_DATA_PORT to trigger next data byte command
-pld r1 // Read data from input port into r1
-mov r1 r1 // Update zero flag
+pld r2 // Read data from input port into r2
+mov r2 r2 // Update zero flag
 jz .receive // Zero data means that there was no transmission yet, so try again
+mov r1 r2
 ret
 
 .send // Send r1 content to the other address

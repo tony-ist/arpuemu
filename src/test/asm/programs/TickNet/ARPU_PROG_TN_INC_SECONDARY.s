@@ -35,20 +35,18 @@ jmp .loop
 
 .receive // Waits for first non zero packet, returns it in register 1, if failed to receive MAX_RECEIVE_ATTEMPTS, it halts the cpu
 imm r2 1
-
 .receive_loop
 imm r4 @TN_COMMAND_NEXT_PACKET
 pst r4 @TN_COMMAND_PORT // Next packet command
 pst r4 @TN_NEXT_DATA_PORT // Write anything to TN_NEXT_DATA_PORT to trigger next data byte command
-pld r1 // Read data from input port into r1
-
+pld r4 // Read data from input port into r4
 imm r3 @MAX_RECEIVE_ATTEMPTS
 sub r3 r2
 jz .halt
 inc r2
-
-mov r1 r1 // Update zero flag
+mov r4 r4 // Update zero flag
 jz .receive_loop // Zero data means that there was no transmission yet, so try again
+mov r1 r4
 ret
 
 .send // Send r1 content to the other address

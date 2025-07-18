@@ -18,10 +18,12 @@ interface EmulatorStatePropsType {
 export function EmulatorStateViewer(props: EmulatorStatePropsType) {
   const { emulatorState } = props;
   const portLabels = ['P0', 'P1', 'P2', 'P3'];
-  const inputPortColumns = portLabels.map((label, index) => ({
-    label,
-    value: emulatorState.inputPorts[index],
-  }));
+  const inputPortColumns = [
+    {
+      label: 'P0',
+      value: emulatorState.inputPorts[0],
+    }
+  ]
   const outputPortColumns = portLabels.map((label, index) => ({
     label,
     value: emulatorState.outputPorts[index],
