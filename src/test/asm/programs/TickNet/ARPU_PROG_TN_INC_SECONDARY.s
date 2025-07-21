@@ -24,6 +24,7 @@
 // Get the next packet
 @define TN_COMMAND_NEXT_PACKET 4
 
+.arpu_tn_inc_secondary
 imm r4 @TN_COMMAND_ON
 pst r4 @TN_COMMAND_PORT // Turn the TN interface on
 

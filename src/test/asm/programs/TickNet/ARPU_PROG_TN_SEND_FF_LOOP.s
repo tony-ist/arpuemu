@@ -1,14 +1,12 @@
-// This program sends a number between instances of 2 ARPUs, which increment the number on every iteration and send it back
-// This is a PRIMARY version of the program, this first sends the INITIAL_NUMBER to RECIPIENT_ADDR and waits for INITIAL_NUMBER + 1 to arrive back, then sends INITIAL_NUMBER + 2 and so on
-// One cycle (from pld to pld) takes about 5 minutes
-// So to count from 1 to 25 it takes about 25 / 2 * 5 = 60 minutes
+// This program sends 0xFF to RECIPIENT_ADDR and waits for an answer. If the answer is 0xFF it sends it again and so on until iteration 255.
+// If the answer is not 0xFF then it halts. Keep in mind that 0 answer is the same as no packet due to adapter limitations, so the program will retry on 0 answer.
+// If it halts, r1 will contain the last number received over the network.
 
 // The address of the other CPU where instance of this program is being run
 @define RECIPIENT_ADDR 43
-// Initial number to send
-@define INITIAL_NUMBER 1
-// When this number is reached then HALT the program
-@define STOP_NUMBER 254
+@define NUMBER_TO_SEND 0xFF
+@define MAX_ITERATIONS 255
+@define START_ITERATION 0
 
 // Send anything to TN_NEXT_DATA_PORT to get next data byte 
 @define TN_NEXT_DATA_PORT 0
@@ -27,23 +25,25 @@
 // Get the next packet
 @define TN_COMMAND_NEXT_PACKET 4
 
-.arpu_tn_inc_primary
+.arpu_tn_send_ff_loop
 imm r4 @TN_COMMAND_ON
 pst r4 @TN_COMMAND_PORT // Turn the TN interface on
 
-imm r1 @INITIAL_NUMBER
+imm r1 @NUMBER_TO_SEND
 cal .send
+imm r3 @START_ITERATION
 
 .loop
 cal .receive
-inc r1
-cal .send
-
-imm r2 @STOP_NUMBER
+imm r2 @NUMBER_TO_SEND
 sub r2 r1
-jc .loop
-
-cal .halt
+jnz .halt
+cal .send
+imm r4 @MAX_ITERATIONS
+inc r3
+sub r4 r3
+jnz .loop
+jmp .halt
 
 .receive // Waits for first non zero packet, returns it in register 1
 imm r4 @TN_COMMAND_NEXT_PACKET
