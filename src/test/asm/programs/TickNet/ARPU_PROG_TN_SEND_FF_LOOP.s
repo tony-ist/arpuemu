@@ -1,9 +1,10 @@
 // This program sends 0xFF to RECIPIENT_ADDR and waits for an answer. If the answer is 0xFF it sends it again and so on until iteration 255.
 // If the answer is not 0xFF then it halts. Keep in mind that 0 answer is the same as no packet due to adapter limitations, so the program will retry on 0 answer.
 // If it halts, r1 will contain the last number received over the network.
+// Set RECIPIENT_ADDR to this CPU's address to send packets to itself.
 
 // The address of the other CPU where instance of this program is being run
-@define RECIPIENT_ADDR 43
+@define RECIPIENT_ADDR 42
 @define NUMBER_TO_SEND 0xFF
 @define MAX_ITERATIONS 255
 @define START_ITERATION 0
@@ -62,6 +63,4 @@ pst r2 @TN_RECEPIENT_ADDR_PORT
 ret
 
 .halt
-imm r4 @TN_COMMAND_OFF
-pst r4 @TN_COMMAND_PORT // Turn the interface off
 halt
